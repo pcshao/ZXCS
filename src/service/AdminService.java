@@ -33,7 +33,8 @@ public class AdminService {
 		//校验完成，获取管理员信息
 		admin = admindao.getAdminInfo(name);
 		return true;
-	}/**
+	}
+	/**
 	 * 增加新管理员
 	 * 	传入管理员对象
 	 * 	boolean

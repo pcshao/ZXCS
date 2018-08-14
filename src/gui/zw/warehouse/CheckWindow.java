@@ -122,7 +122,7 @@ public class CheckWindow extends JFrame {
 		//columnNames.add("商品数量");
 		columnNames.add("备注");
 		//gdao.getpdOrders()rowData
-		model=new DefaultTableModel(gdao.getgoodsthree(), columnNames);
+		model=new DefaultTableModel(gdao.getGoods(), columnNames);
 		table=new JTable(model);
 		//第二个表格
 		columnNames1.add("编号");	

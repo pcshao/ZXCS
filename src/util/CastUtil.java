@@ -10,6 +10,7 @@ import bean.Depot;
 import bean.Employee;
 import bean.Goods;
 import bean.Supplier;
+import bean.orders.DbOrder;
 
 /**
  * @author yc;
@@ -94,8 +95,7 @@ public class CastUtil {
 		for(Vector c : sellgoods){
 			Goods g=new Goods();
 			g.setId(Integer.parseInt(c.get(0).toString()));
-			g.setSellPrice(Double.parseDouble(c.get(4).toString()));//设置当前的单价
-			g.setTempNum(Integer.parseInt(c.get(7).toString()));//数量
+			g.setTempNum(Integer.parseInt(c.get(3).toString()));//数量
 			ret.add(g);
 		}
 		return ret;
@@ -131,6 +131,22 @@ public class CastUtil {
 			item.add(o.getName());
 			item.add(o.getPhone());			
 			ret.add(item);
+		}
+		return ret;
+	}
+	/**
+	 * 库存调拨
+	 * vector对象转goods
+	 * @param sellgoods
+	 * @return
+	 */
+	public HashSet<Goods> vectorToGoods(Vector<Vector> dbgoods, DbOrder type){
+		HashSet<Goods> ret = new HashSet<Goods>();
+		for(Vector c : dbgoods){
+			Goods g=new Goods();
+			g.setId(Integer.parseInt(c.get(0).toString()));
+			g.setTempNum(Integer.parseInt(c.get(3).toString()));//数量
+			ret.add(g);
 		}
 		return ret;
 	}

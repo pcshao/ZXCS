@@ -50,6 +50,11 @@ public class SellService {
 	 */
 	public void addOrder(SellOrder order, HashSet<Goods> sellGoods, boolean manalDate) {
 		orderdao = new OrderDao();
+		GoodsDao goodsdao = new GoodsDao();
+		//增加商品当时的进价 暂时无视效率问题 冗余售价，售价可以与当前订单的应收、实收金额中查询
+		for(Goods g:sellGoods) {
+			g.setInPrice(goodsdao.getInPriceById(g.getId()));
+		}
 		orderdao.addOrders(order, manalDate);
 		orderdao.addOrderDetails(order.getId(), sellGoods);
 		int depotId = order.getDepot().getDid();

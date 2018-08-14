@@ -6,6 +6,8 @@ import bean.Employee;
 import bean.PayWay;
 
 public class DbOrder{
+	
+	public static final String ORDERNAME="DB";
 
 	private String id;				//单据号
 	private String odate;			//开单日期

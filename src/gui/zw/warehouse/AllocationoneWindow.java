@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -25,13 +26,21 @@ import javax.swing.JTextField;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
+import bean.Depot;
+import bean.Employee;
+import bean.orders.DbOrder;
 import dao.AdminDao;
 import dao.DepotsDao;
 import dao.EmployeesDao;
 import dao.GoodsDao;
+import dao.OrderDao;
 import gui.zw.modewindow.AInorderDiagWindow;
 import gui.zw.modewindow.AddGoodsModelWindow;
+import service.AdminService;
+import service.DepotService;
+import util.CastUtil;
 import util.MyDateChooser;
+import java.awt.Color;
 
 /*库存调拨单
  * 库存调查
@@ -58,19 +67,13 @@ public class AllocationoneWindow extends JFrame {
 	//表格
 	JTable table;
 	Vector<Vector> rowData=new Vector<Vector>();
+	Vector<Vector> nowVector;
 	Vector columnNames=new Vector();
 	Vector rd1=new Vector();
 	Vector rd2=new Vector();
 	Vector rd3=new Vector();
 	DefaultTableModel model;
 	GoodsDao gdao=null;
-	/*String[][]rowData={
-			{"A","王力宏","42","曼彻斯特","男"},
-			{"B","周杰伦","40","台湾","男"},
-			{"C","吴亦凡","28","马来西亚","男"},
-			{"D","林俊杰","38","温哥华","男"}
-			};
-	String[]columnNames={"编号","姓名","年龄","城市","性别"};*/
 	JTable table1;
 	Vector<Vector> rowData1=new Vector<Vector>();	
 	Vector columnNames1=new Vector();
@@ -83,14 +86,15 @@ public class AllocationoneWindow extends JFrame {
 	DefaultTableModel model2;
 	MyDateChooser dc1,dc2_1,dc2_2;
 	DefaultComboBoxModel modelc ,modelc1,modelc2;
-	//GoodsDao gdao;
 	
-	
+	//注册服务
+	DepotService depotService;
 	
 	Vector<Vector> data3;
 	public AllocationoneWindow(){
+		
 		gdao=new GoodsDao();
-		//gdao=new GoodsDao();
+		depotService = new DepotService();
 		
 		modelc=new DefaultComboBoxModel(new DepotsDao().getDepots());
 		c_add=new  JComboBox();
@@ -116,7 +120,9 @@ public class AllocationoneWindow extends JFrame {
 		p3=new JPanel();p4=new JPanel();p5=new JPanel();
 		//p6=new JPanel();p7=new JPanel();p8=new JPanel();
 		tf1_1=new JTextField(10);tf1_2=new JTextField(10);
-		tf_1=new JTextField(10);tf_2=new JTextField(10);tf_3=new JTextField(10);
+		tf_1=new JTextField(15);
+		tf_1.setEditable(false);
+		tf_1.setForeground(Color.RED);tf_2=new JTextField(10);tf_3=new JTextField(10);
 		tf_4=new JTextField(8);tf_5=new JTextField(50);tf_6=new JTextField(20);
 		tf_7=new JTextField(10);
 		tf1_1=new JTextField(8);
@@ -127,25 +133,28 @@ public class AllocationoneWindow extends JFrame {
 		jp_top_center=new JPanel();
 		tp_1=new JTabbedPane();
 		jp_o=new JPanel();jp_t=new JPanel();
-		l1=new JLabel("库存调查");
+		l1=new JLabel("库存调拨");
 		//po最上层
 		tp_1.add("调拨商品",jp_o);tp_1.add("调拨单查询",jp_t);
 		l1.setFont(new Font("微软雅黑",5,30));	
 		jp_top_top.add(l1);
 		jp_top_center.add(new Label("调出仓库:"));jp_top_center.add(c_add);
 		jp_top_center.add(new Label("调入仓库:"));jp_top_center.add(c_add1);
-		jp_top_center.add(new Label("调拨时期"));	
+		jp_top_center.add(new Label("调拨时期"));
+		tf_3.setText(dc1.getStrDate());
 		dc1.register(tf_3);jp_top_center.add(tf_3);
 		jp_top_center.add(new Label("调拨单号"));jp_top_center.add(tf_1);
 		//po中间表格
+
+		/*
+		 * tf_1 生成调拨订单号
+		 */
+		tf_1.setText(new OrderDao().getDbOrderId());
 		
 		columnNames.add("商品编号");
 		columnNames.add("商品名称");
 		columnNames.add("单位");
-		columnNames.add("规格");	
-		
-		columnNames.add("预设售价");
-		columnNames.add("库存量");	
+		columnNames.add("调拨数量");	
 		//这里gdao.getgoodstoreInfo()
 		model=new DefaultTableModel(null, columnNames);
 		table=new JTable(model);
@@ -162,7 +171,7 @@ public class AllocationoneWindow extends JFrame {
 		jp_o.add(jp_top,BorderLayout.NORTH);		
 		jp_top.setLayout(new GridLayout(3,1));
 		jp_top.add(jp_top_top);
-		jp_top.add(	jp_top_center);	
+		jp_top.add(	jp_top_center);
 		jp_top.add(	jp_top_low);//jp_top.add(tf_7);	
 		jp_top_low.setBorder(BorderFactory.createTitledBorder("商品库存查询"));
 		jp_top_low.add(b4);
@@ -211,7 +220,7 @@ public class AllocationoneWindow extends JFrame {
 				columnNames1.add("支付方式");
 				columnNames1.add("备注");
 				//这里应该是  gdao.inordersinfo()
-				model1=new DefaultTableModel(gdao.inordersinfo(), columnNames1);
+				model1=new DefaultTableModel(gdao.getpdOrders(), columnNames1);
 				table1=new JTable(model1);
 		//下层表格
 				columnNames2.add("编号");
@@ -252,26 +261,28 @@ public class AllocationoneWindow extends JFrame {
 			);
 		b3.addActionListener(new ActionListener() {
 			//退出
-		
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-				
+				AllocationoneWindow.this.setVisible(false);
 			}
 		});
-		
 		b4.addActionListener(new ActionListener() {
 			//添加商品
-		
 			public void actionPerformed(ActionEvent e) {
 				//System.exit(0);
-				AddGoodsModelWindow agmw=new  AddGoodsModelWindow("库存调拨  （增加商品）");
+				AddGoodsModelWindow agmw = new AddGoodsModelWindow("库存调拨  （增加商品）");
 				 data3=agmw.data3;
-				 model=new DefaultTableModel(data3, columnNames);
+				 nowVector = new Vector<>();
+				 for(int i=0;i<data3.size();i++) {
+					 Vector vv = new Vector<>();
+					 vv.add(data3.get(i).get(0));
+					 vv.add(data3.get(i).get(1));
+					 vv.add(data3.get(i).get(2));
+					 vv.add(data3.get(i).get(6));
+					 nowVector.add(vv);
+				 }
+				 model=new DefaultTableModel(nowVector, columnNames);
 				 table.setModel(model);
 				 table.updateUI();
-				 
-				
-				
 			}
 		});
 		btn_1.addActionListener(new ActionListener() {
@@ -284,7 +295,6 @@ public class AllocationoneWindow extends JFrame {
 				model1=new DefaultTableModel(gdao.inordersinfoqueery(info), columnNames);
 				table1.setModel(model1);
 				table1.updateUI();
-				
 			}
 		});
 		
@@ -323,10 +333,26 @@ public class AllocationoneWindow extends JFrame {
 				AllocationoneWindow.this.setVisible(false);
 			}
 		});
-		
+		/**
+		 * 生成调拨单
+		 */
+		b2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DbOrder dbOrder = new DbOrder();
+				dbOrder.setId(tf_1.getText());
+				dbOrder.setOdate(tf_3.getText());
+				dbOrder.setFromDepot((Depot)c_add.getSelectedItem());
+				dbOrder.setToDepot((Depot)c_add1.getSelectedItem());
+				dbOrder.setAgent((Employee)c_add2.getSelectedItem());
+				dbOrder.setOperator(AdminService.admin);
+				dbOrder.setBz(tf_5.getText()+"");
+				depotService.transDepot(dbOrder, new CastUtil().vectorToGoods(nowVector));
+				new JOptionPane().showMessageDialog(AllocationoneWindow.this, "调拨成功！");
+			}
+		});
 		
 		this.setTitle("库存调拨");
-		this.add(tp_1);//pt.add(new AllocationtestTwo());
+		getContentPane().add(tp_1);//pt.add(new AllocationtestTwo());
 		
 		//
 	
@@ -336,6 +362,7 @@ public class AllocationoneWindow extends JFrame {
 		
 	}
 	public static void main(String[] args) {
+		new AdminService().Login("admin", "123");
 		new AllocationoneWindow();
 	}
 

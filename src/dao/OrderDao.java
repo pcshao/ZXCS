@@ -207,6 +207,33 @@ public class OrderDao {
 		}
 	}
 	/**
+	 * 调拨记录单
+	 */
+	public void addDbOrder(DbOrder dbOrder) {
+		String sql = "insert into dbOrders (id,odate,"
+				+ "fromDepot,toDepot,agent,operator,bz)values("
+				+ "?"
+				+ ",to_date(?,'yyyy-MM-dd')"
+				+ ",?,?,?,?,?)";
+		conn = db.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setString(1, dbOrder.getId());
+			pstat.setString(2, dbOrder.getOdate());
+			pstat.setInt(3, dbOrder.getFromDepot().getDid());
+			pstat.setInt(4, dbOrder.getToDepot().getDid());
+			pstat.setInt(5, dbOrder.getAgent().getEid());
+			pstat.setInt(6, dbOrder.getOperator().getAid());
+			pstat.setString(7, dbOrder.getBz());
+			pstat.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			LogMark.LogWrite("-调拨订单操作-");
+			db.closeConnection(conn, pstat);
+		}
+	}
+	/**
 	 * 销售退货单
 	 */
 	public void addOrders(SellOrder_tui order) {
@@ -311,7 +338,7 @@ public class OrderDao {
 	 */
 	public String getDbOrderId() {
 		String currId = "";
-		String sql = "select 'DB'||TO_CHAR(SYSDATE,'YYYYMMDD')||TRIM(TO_CHAR(sq_orders_id.nextval,'00000000')) as id from dual";
+		String sql = "select '"+DbOrder.ORDERNAME+"'||TO_CHAR(SYSDATE,'YYYYMMDD')||TRIM(TO_CHAR(sq_orders_id.nextval,'00000000')) as id from dual";
 		conn = db.getConnection();
 		try {
 			stmt = conn.createStatement();
@@ -324,39 +351,13 @@ public class OrderDao {
 		return currId;
 	}
 	/**
-	 * 调拨记录单
-	 */
-	public void addDbOrder(DbOrder dbOrder) {
-		String sql = "insert into dbOrders (id,odate,"
-				+ "fromDepot,toDepot,agent,operator,bz)values("
-				+ "?"
-				+ ",?"
-				+ ",?,?,?,?,?)";
-		conn = db.getConnection();
-		try {
-			pstat = conn.prepareStatement(sql);
-			pstat.setString(1, dbOrder.getId());
-			pstat.setString(2, dbOrder.getOdate());
-			pstat.setInt(3, dbOrder.getFromDepot().getDid());
-			pstat.setInt(4, dbOrder.getToDepot().getDid());
-			pstat.setInt(5, dbOrder.getAgent().getEid());
-			pstat.setInt(6, dbOrder.getOperator().getAid());
-			pstat.setString(7, dbOrder.getBz());
-			pstat.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			LogMark.LogWrite("-调拨订单操作-");
-			db.closeConnection(conn, pstat, rs);
-		}
-	}
-	/**
 	 * 生成调拨详情单
 	 * @param id
 	 * @param transGoods
 	 */
 	public void addDbOrdersDetails(String id, HashSet<Goods> transGoods) {
-		String sql = "insert into dbOrdersDetails (id,oid,gid,num)values(sq_dbOrdersDetails.nextval,?,?,?)";
+		String sql = "insert into dbOrdersDetails (id,oid,gid,num)"
+				+ "values(sq_dbOrdersdetails_id.nextval,?,?,?)";
 		conn = db.getConnection();
 		try {
 			for(Goods g : transGoods) {

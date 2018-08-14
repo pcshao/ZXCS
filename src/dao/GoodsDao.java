@@ -37,10 +37,10 @@ public class GoodsDao {
 	 */
 	public ArrayList<Goods> isAlert() {
 		ArrayList<Goods> ret = new ArrayList<Goods>();;
-		String sql = "select id,name,now from (\r\n" + 
-				"	select gid,sum(count) as now from goods g inner join goodsStore d on g.id = d.gid GROUP BY GID\r\n" + 
-				")a inner join(\r\n" + 
-				"	select * from goods\r\n" + 
+		String sql = "select id,name,now from (" + 
+				"select gid,sum(count) as now from goodsStore d inner join goods g on g.id = d.gid GROUP BY GID" + 
+				")a inner join(" + 
+				"	select * from goods" + 
 				")b on a.gid = b.id and (now-alertNum)<0";
 		conn = db.getConnection();
 		try {
@@ -129,11 +129,6 @@ public class GoodsDao {
 		}
 		return ret;
 	}
-	public static void main(String[] args) {
-		for(Vector v :new GoodsDao().getGoodsMainInfoByVector())
-			System.out.println(v);
-	}
-
 	/**
 	 * 根据时间段筛选仓库列表 获取库存成本统计
 	 *  结算月份 仓库名称 库存数量 库存总成本
@@ -144,7 +139,8 @@ public class GoodsDao {
 	public Vector<Vector> getDepotsCostByDate(String from, String to){
 		Vector<Vector> ret = new Vector<>();
 		//查询出from to 时间段、仓库名称 的进货数量
-		String sql = "select depot,sum(num) from INORDERS io inner join INORDERSDETAILS ios on ios.oid = io.id and odate between to_date(201808,'yyyyMM')  and to_date(201808,'yyyyMM') and depot = '' group by depot ;";
+		String sql = "select depot,sum(num) from INORDERS io "
+				+ "inner join INORDERSDETAILS ios on ios.oid = io.id and odate between to_date(201808,'yyyyMM')  and to_date(201808,'yyyyMM') and depot = '' group by depot ;";
 		conn = db.getConnection();
 		try {
 			pstat = conn.prepareStatement(sql);
@@ -453,9 +449,7 @@ public class GoodsDao {
 			Vector data=null;
 			
 			String sql="select * from goods";
-			Connection conn=db.getConnection();
-			PreparedStatement pstat=null;
-			ResultSet rs=null;
+			conn=db.getConnection();
 			try{
 				pstat=conn.prepareStatement(sql);
 				rs=pstat.executeQuery();
@@ -464,7 +458,7 @@ public class GoodsDao {
 					data.add(rs.getInt("id"));
 					data.add(rs.getString("name"));
 					data.add(rs.getString("type"));
-					data.add(rs.getInt("norms"));
+					data.add(rs.getString("norms"));
 					data.add(rs.getInt("inPrice"));
 					data.add(rs.getInt("sellPrice"));
 					data.add(rs.getString("bz"));
@@ -478,48 +472,15 @@ public class GoodsDao {
 			}
 			return datas;
 		}
-		//获取根据指定 名字 ID查询产品的信息
-		public Vector<Vector> getProductInfoByName(String info){
-			Vector<Vector> datas=new Vector<Vector>();
-			Vector data=null;
-			String sql1="select * from goods where name like ? or id like ?";
-			
-			Connection conn=db.getConnection();
-			PreparedStatement pstat=null;
-			ResultSet rs=null;
-			try{
-				pstat=conn.prepareStatement(sql1);
-				pstat.setString(1, "%"+info+"%");
-				pstat.setString(2, "%"+info+"%");
-				rs=pstat.executeQuery();
-				while(rs.next()){
-					data=new Vector();
-					data.add(rs.getInt("id"));
-					data.add(rs.getString("name"));
-					data.add(rs.getFloat("type"));
-					data.add(rs.getInt("norms"));
-					data.add(rs.getInt("inPrice"));
-					data.add(rs.getInt("sellPrice"));
-					data.add(rs.getString("bz"));
-					data.add(rs.getInt("alertNum"));
-					datas.add(data);
-				}
-				
-			}catch(SQLException e){
-				e.printStackTrace();
-			}finally{
-				db.closeConnection(conn, pstat, rs);
-			}
-			return datas;
-		}
-		
-		
-		//获取goods所有产品信息是  自己添加的  联合查询
+		/**
+		 * 库存报警表
+		 * 获取商品信息
+		 * @return
+		 */
 		public Vector<Vector> getgoodstoreInfo(){
 			Vector<Vector> datas=new Vector<Vector>();
 			Vector data=null;
-			
-			String sql="select gs.id,gs.gid,gs.count,d.name,g.alertNum " +
+			String sql="select gs.id,gs.gid,gs.count,g.name gname,d.name dname,g.alertNum " +
 					"from goodsStore gs " +
 					"inner join depots d on d.did = gs.depot " +
 					"inner join goods g on g.id = gs.gid";
@@ -533,7 +494,8 @@ public class GoodsDao {
 					data=new Vector();
 					data.add(rs.getInt("id"));
 					data.add(rs.getString("gid"));
-					data.add(rs.getString("name"));
+					data.add(rs.getString("gname"));
+					data.add(rs.getString("dname"));
 					data.add(rs.getString("count"));
 					data.add(rs.getInt("alertNum"));
 					datas.add(data);
@@ -545,69 +507,11 @@ public class GoodsDao {
 			}
 			return datas;
 		}
-		//获取 编号查询goodsstore中的所有产品信息,是  自己添加的
-		public Vector<Vector> getgoodstorequeery(String gid){
-			Vector<Vector> datas=new Vector<Vector>();
-			Vector data=null;
-			
-			String sql="select * from goodsstore where id like ?";
-			Connection conn=db.getConnection();
-			PreparedStatement pstat=null;
-			ResultSet rs=null;
-			try{
-				pstat=conn.prepareStatement(sql);
-				pstat.setString(1, "%"+gid+"%");
-				rs=pstat.executeQuery();
-				while(rs.next()){
-					data=new Vector();
-					data.add(rs.getInt("id"));
-					data.add(rs.getString("gid"));
-					data.add(rs.getInt("depot"));
-					data.add(rs.getString("count"));						
-					datas.add(data);
-				}
-			}catch(SQLException e){
-				e.printStackTrace();
-			}finally{
-				db.closeConnection(conn, pstat, rs);
-			}
-			return datas;
-		}
-		
-		//获取  调拨单据所有信息   
-		public Vector<Vector> inordersinfo(){
-			Vector<Vector> datas=new Vector<Vector>();
-			Vector data=null;
-			
-			String sql="select * from inOrders";
-			Connection conn=db.getConnection();
-			PreparedStatement pstat=null;
-			ResultSet rs=null;
-			try{
-				pstat=conn.prepareStatement(sql);					
-				rs=pstat.executeQuery();
-				while(rs.next()){
-					data=new Vector();
-					data.add(rs.getString("id"));
-					data.add(rs.getString("odate"));
-					data.add(rs.getString("supplier"));
-					data.add(rs.getString("depot"));
-					data.add(rs.getString("wantMoney"));
-					data.add(rs.getString("payMoney"));
-					data.add(rs.getString("agent"));
-					data.add(rs.getString("operator"));
-					data.add(rs.getString("payWay"));
-					data.add(rs.getString("bz"));
-					datas.add(data);
-				}
-			}catch(SQLException e){
-				e.printStackTrace();
-			}finally{
-				db.closeConnection(conn, pstat, rs);
-			}
-			return datas;
-		}
-		//获取根据指定 或者 单据编号查询
+		/**
+		 * 获取根据指定 或者 单据编号查询
+		 * @param info
+		 * @return
+		 */
 		public Vector<Vector> inordersinfoqueery(String info){
 			Vector<Vector> datas=new Vector<Vector>();
 			Vector data=null;
@@ -634,7 +538,6 @@ public class GoodsDao {
 					data.add(rs.getString("bz"));
 					datas.add(data);
 				}
-				
 			}catch(SQLException e){
 				e.printStackTrace();
 			}finally{
@@ -642,11 +545,13 @@ public class GoodsDao {
 			}
 			return datas;
 		}
-		//获取   盘点单据所有信息   
+		/**
+		 * 获取   盘点单据所有信息   
+		 * @return
+		 */
 		public Vector<Vector> getpdOrders(){
 			Vector<Vector> datas=new Vector<Vector>();
 			Vector data=null;
-			//String sql="select * from inOrders";
 			String sql="select * from PdOrders";
 			Connection conn=db.getConnection();
 			PreparedStatement pstat=null;
@@ -670,11 +575,13 @@ public class GoodsDao {
 			}
 			return datas;
 		}
-		//获取   盘点 商品详情所有信息   
+		/**
+		 * 获取   盘点 商品详情所有信息   
+		 * @return
+		 */
 		public Vector<Vector> getpdOrdersDetails(){
 			Vector<Vector> datas=new Vector<Vector>();
 			Vector data=null;
-			
 			String sql="select * from Pdordersdetails";
 			Connection conn=db.getConnection();
 			PreparedStatement pstat=null;
@@ -697,7 +604,7 @@ public class GoodsDao {
 			return datas;
 		}
 		//获取   树那里的所有     商品所有产品信息  是  
-		public Vector<Vector> getgoodsthree(){
+		public Vector<Vector> getGoods(){
 			Vector<Vector> datas=new Vector<Vector>();
 			Vector data=null;
 			
@@ -776,38 +683,6 @@ public class GoodsDao {
 			}
 			return datas;
 		}
-		
-		//获取goods所有产品信息是  COPY shao  联合查询
-		public Vector<Vector> getgoodstoreInfo1(){
-			Vector<Vector> datas=new Vector<Vector>();
-			Vector data=null;
-			
-			String sql="select gs.id,gs.gid,gs.count,d.name,g.alertNum " +
-					"from goodsStore gs " +
-					"inner join depots d on d.did = gs.depot " +
-					"inner join goods g on g.id = gs.gid";
-			Connection conn=db.getConnection();
-			PreparedStatement pstat=null;
-			ResultSet rs=null;
-			try{
-				pstat=conn.prepareStatement(sql);
-				rs=pstat.executeQuery();
-				while(rs.next()){
-					data=new Vector();
-					data.add(rs.getInt("id"));
-					data.add(rs.getString("gid"));
-					data.add(rs.getString("name"));
-					data.add(rs.getString("count"));
-					data.add(rs.getInt("alertNum"));
-					datas.add(data);
-				}
-			}catch(SQLException e){
-				e.printStackTrace();
-			}finally{
-				db.closeConnection(conn, pstat, rs);
-			}
-			return datas;
-		}
 	/**
 	 * ******************************************************
 	 */
@@ -815,6 +690,43 @@ public class GoodsDao {
 	 * zw
 	 * ******************************************************
 	 */
+	/**
+	 * 库存报警表，根据商品id或者名称查找商品
+	 * @param info
+	 * @return
+	 */
+	public Vector<Vector> getgoodstoreInfoByIdOrName(String info) {
+		if(info.equals(""))
+			return getgoodstoreInfo();
+		Vector<Vector> datas=new Vector<Vector>();
+		String sql="select gs.id,gs.gid,gs.count,g.name gname,d.name dname,g.alertNum " +
+				" from goodsStore gs " +
+				" inner join depots d on d.did = gs.depot " +
+				" inner join goods g on g.id = gs.gid" +
+				" and gs.gid like ? or g.name like ?";
+		conn=db.getConnection();
+		try{
+			pstat=conn.prepareStatement(sql);
+			pstat.setString(1, "%"+info+"%");
+			pstat.setString(2, "%"+info+"%");
+			rs=pstat.executeQuery();
+			while(rs.next()){
+				Vector data = new Vector();
+				data.add(rs.getInt("id"));
+				data.add(rs.getString("gid"));
+				data.add(rs.getString("gname"));
+				data.add(rs.getString("dname"));
+				data.add(rs.getString("count"));
+				data.add(rs.getInt("alertNum"));
+				datas.add(data);
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}finally{
+			db.closeConnection(conn, pstat, rs);
+		}
+		return datas;
+	}
 		
 	/**
 	 * ******************************************************

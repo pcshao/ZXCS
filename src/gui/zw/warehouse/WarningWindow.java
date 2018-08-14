@@ -42,11 +42,11 @@ import util.MyDateChooser;
 public class WarningWindow extends JFrame{
 	JTabbedPane tp1,tp2,tp3,tp4;//选项卡
 	JPanel jp_center,jp_top,jp_low;
-	JPanel jp_center_top,jp_center_low,jp_low_top,
+	JPanel jp_center_top,jp_center_low,
 	jp_top_center_top,jp_low_low,jp_low_center,jp_top_top,jp_top_low,jp_top_center;		
-	JTextField tf_1,tf_2,tf_3,tf_4,tf_5,tf_6,tf2_3;
+	JTextField tf_3,tf_4,tf_5,tf_6,tf2_3;
 	Vector items=new Vector();
-	JButton btn_1,btn_2,btn_3,btn_4,btn_5,btn_6,btn_7,btn_8,btn_9;
+	JButton btn_1,btn_2,btn_3,btn_4,btn_5,btn_6,btn_7,btn_9;
 	JButton btn1_1,btn1_2;
 	//第一个表格
 	JTable table;
@@ -62,12 +62,14 @@ public class WarningWindow extends JFrame{
 	Vector columnNames1=new Vector();
 	DefaultTableModel model1;
 	
-	GoodsDao gdao=null;
+	GoodsDao gdao;
 	MyDateChooser dc1,dc2_1,dc2_2;
 	//注册服务
 	DepotService depotService;
 	DepotsDao ddao;
+	
 	public WarningWindow (){
+		
 		depotService = new DepotService();
 		gdao=new GoodsDao();
 		ddao=new DepotsDao();
@@ -83,15 +85,22 @@ public class WarningWindow extends JFrame{
 		btn_4=new JButton("导出");
 		btn_5=new JButton("打印 ");
 		btn_6=new JButton("退出 ");btn_7=new JButton("查询 ");
-		btn_8=new JButton("查找 ");
-		btn1_1=new JButton("确定");btn1_2=new JButton("退出");
-			
-		tf_1=new JTextField(10);tf_2=new JTextField(10);tf_3=new JTextField(10);
+		btn1_1=new JButton("确定");
+		btn1_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn1_2.doClick();
+			}
+		});
+		btn1_2=new JButton("退出");
+		btn1_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WarningWindow.this.setVisible(false);
+			}
+		});tf_3=new JTextField(10);
 		tf_4=new JTextField(8);tf_5=new JTextField(50);tf_6=new JTextField(20);
 		tf2_3=new JTextField(10);
 		jp_center=new JPanel();jp_top=new JPanel();jp_low=new JPanel();
-		jp_center_top=new JPanel();jp_center_low=new JPanel();
-		jp_low_top=new JPanel();jp_low_low=new JPanel();jp_low_center=new JPanel();
+		jp_center_top=new JPanel();jp_center_low=new JPanel();jp_low_low=new JPanel();jp_low_center=new JPanel();
 		jp_top_top=new JPanel();jp_top_low=new JPanel();jp_top_center=new JPanel();
 		jp_top_center_top=new JPanel();
 		
@@ -102,7 +111,8 @@ public class WarningWindow extends JFrame{
 		jp_top_top.add(btn_6);
 		//第一个表格
 		columnNames.add("编号");
-		columnNames.add("商品编号");		
+		columnNames.add("商品编号");	
+		columnNames.add("商品名称");		
 		columnNames.add("所在仓库");
 		columnNames.add("库存量");		
 		columnNames.add("最低库存");//goods  中alertnum
@@ -117,7 +127,7 @@ public class WarningWindow extends JFrame{
 		columnNames1.add("进价");
 		columnNames1.add("售价");
 		columnNames1.add("备注");
-		columnNames1.add("数量");
+		columnNames1.add("报警库存");
 		//这里是gdao.getProductInfo()
 		model1=new DefaultTableModel(gdao.getProductInfo(), columnNames1);
 		table1=new JTable(model1);
@@ -135,21 +145,9 @@ public class WarningWindow extends JFrame{
 		
 		//jp_center.add(jp_center_top,BorderLayout.NORTH);
 		jp_top_center.add(new JScrollPane(table),BorderLayout.CENTER);
-		//jp_top.add(new JScrollPane(table),BorderLayout.CENTER);
-		//jp_top.add(new Label("商品数0"),BorderLayout.SOUTH);
-		
-		//low面板再分
-		jp_low_top.add(new Label("进货销售明细："));jp_low_top.add(new Label("调到哪个仓库"));
-		//dc2_1.register(tf_1);
-		jp_low_top.add(tf_1);
-		//此处应添加时间
-		jp_low_top.add(new Label("根据商品ID或者名称查找"));
-		jp_low_top.add(tf_2);
-		jp_low_top.add(btn_8);
 		
 		jp_low.setBorder(BorderFactory.createTitledBorder("看下进了神马货"));
 		jp_low.setLayout(new BorderLayout());
-		jp_low.add(jp_low_top,BorderLayout.NORTH);
 		jp_low.add(new JScrollPane(table1),BorderLayout.CENTER);
 		jp_low.add(jp_low_low,BorderLayout.SOUTH);
 		jp_low_low.add(btn1_1);jp_low_low.add(btn1_2);
@@ -175,10 +173,8 @@ public class WarningWindow extends JFrame{
 		btn_1.addMouseListener(new MouseListener() {			
 		//警报颜色事件
 			public void mouseReleased(MouseEvent e) {
-						}
-
+			}
 			public void mousePressed(MouseEvent e) {
-			
 				btn_1.setBackground(Color.RED);
 			}
 			public void mouseExited(MouseEvent e) {
@@ -203,7 +199,6 @@ public class WarningWindow extends JFrame{
 				
 			}
 		});
-				
 		
 		btn_4.addActionListener(new ActionListener() {
 			//事件   导入到文件夹
@@ -224,37 +219,21 @@ public class WarningWindow extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String info=tf2_3.getText().trim();
-				//gdao.getgoodsthreequeery(info)
-				model=new DefaultTableModel(new CastUtil().depots(new DepotsDao().getDepots()), columnNames);
+				model=new DefaultTableModel(gdao.getgoodstoreInfoByIdOrName(info), columnNames);
 				table.setModel(model);
 				table.updateUI();
-				
-			}
-		});
-		btn_8.addActionListener(new ActionListener() {
-			//查找库存事件 根据编号或者名称
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String info=tf_2.getText().trim();
-				System.out.println(info);
-				//DefaultTableModel model3=new DefaultTableModel(gdao.getProductInfoByName(info), columnNames);
-				model1=new DefaultTableModel(gdao.getgoodsthree(), columnNames);
-				table1.setModel(model1);
-				table1.updateUI();
-				
 			}
 		});
 		
 		
 		
 		//整块面板网格布局分界
-		this.add(jp_top);this.add(jp_low);
-		this.setLayout(new GridLayout(2,1));
+		getContentPane().add(jp_top);getContentPane().add(jp_low);
+		getContentPane().setLayout(new GridLayout(2,1));
 		this.setTitle("库存警报");			
 		this.setBounds(100, 100, 800, 600);
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.setVisible(true);
-		
 	}
 	public static void main(String[] args) {
 		new WarningWindow();

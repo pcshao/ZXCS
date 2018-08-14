@@ -47,7 +47,6 @@ public class DepotService {
 		int toDepotId = dbOrder.getToDepot().getDid();
 		//生成调拨记录单
 		OrderDao orderDao = new OrderDao();
-		dbOrder.setId(orderDao.getDbOrderId());	//设置调拨单ID
 		orderDao.addDbOrder(dbOrder);
 		//生成调拨详情单
 		orderDao.addDbOrdersDetails(dbOrder.getId(), transGoods);
