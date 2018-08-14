@@ -24,7 +24,8 @@ public class TypeTreeModelWindow extends JDialog{
 	TypeWindow typetree;
 	DefaultMutableTreeNode node;
 	JTree tree;
-	GoodsType type;
+	public GoodsType type;
+	
 	public TypeTreeModelWindow() {
 		typetree=new TypeWindow();
 		jp1=new JPanel();

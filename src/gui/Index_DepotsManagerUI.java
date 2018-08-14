@@ -8,9 +8,8 @@ import java.awt.Checkbox;
 
 import javax.swing.border.EmptyBorder;
 
-import warehouse.AllocationoneWindow;
-import warehouse.CheckWindow;
-import warehouse.WarningWindow;
+import gui.yc.StockCheckModelWindow;
+import gui.zw.warehouse.*;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

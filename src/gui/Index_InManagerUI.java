@@ -13,6 +13,7 @@ import gui.lxh.BuyDocumentsCheckModelWindow;
 import gui.lxh.BuyReturnGoodsModelWindow;
 import gui.lxh.CurrentoInAccountsModelWindow;
 import gui.lxh.InputGoodsModelWindow;
+import gui.yc.StockCheckModelWindow;
 
 public class Index_InManagerUI extends JPanel {
 	

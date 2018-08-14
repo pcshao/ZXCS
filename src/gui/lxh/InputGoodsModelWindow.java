@@ -445,8 +445,7 @@ public class InputGoodsModelWindow extends JDialog{
 		 */
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			InputGoodsModelWindow.this.setVisible(false);
-				
+				InputGoodsModelWindow.this.setVisible(false);
 			}
 		});
 		this.setModal(true);												//设置为模式窗口

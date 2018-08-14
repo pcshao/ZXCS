@@ -2,6 +2,8 @@ package gui.lxh;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -474,7 +476,14 @@ public class CurrentoInAccountsModelWindow extends JDialog{
 		jp_p5.add(p5_1,BorderLayout.NORTH);
 		jp_p5.add(p5_2,BorderLayout.CENTER);
 		tabbed.add("我方付款明细",jp_p5);
-		
+
+		//监听
+		btn_p1_8.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CurrentoInAccountsModelWindow.this.setVisible(false);
+			}
+		});
 		
 		this.add(tabbed);
 		this.setTitle("往来账务（供货商）");	
