@@ -3,7 +3,6 @@ package service;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.junit.Test;
 import util.*;
 import dao.*;
 import service.*;

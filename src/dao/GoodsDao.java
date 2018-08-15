@@ -10,8 +10,6 @@ import java.util.Vector;
 
 import javax.xml.crypto.Data;
 
-import org.junit.Test;
-
 import bean.Goods;
 import bean.Units;
 import util.DataBaseUtil;
