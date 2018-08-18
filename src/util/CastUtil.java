@@ -90,12 +90,24 @@ public class CastUtil {
 	 * @param sellgoods
 	 * @return
 	 */
-	public HashSet<Goods> vectorToGoods(Vector<Vector> sellgoods){
+	public HashSet<Goods> vectorToGoods_sell(Vector<Vector> sellgoods){
 		HashSet<Goods> ret = new HashSet<Goods>();
 		for(Vector c : sellgoods){
 			Goods g=new Goods();
 			g.setId(Integer.parseInt(c.get(0).toString()));
-			g.setTempNum(Integer.parseInt(c.get(3).toString()));//数量
+			g.setSellPrice(Double.parseDouble(c.get(4).toString()));//设置当前的单价
+			g.setTempNum(Integer.parseInt(c.get(7).toString()));//数量
+			ret.add(g);
+		}
+		return ret;
+	}
+	public HashSet<Goods> vectorToGoods_tui(Vector<Vector> sellgoods){
+		HashSet<Goods> ret = new HashSet<Goods>();
+		for(Vector c : sellgoods){
+			Goods g=new Goods();
+			g.setId(Integer.parseInt(c.get(0).toString()));
+			g.setSellPrice(Double.parseDouble(c.get(4).toString()));//设置当前的单价
+			g.setTempNum(Integer.parseInt(c.get(5).toString()));//数量
 			ret.add(g);
 		}
 		return ret;

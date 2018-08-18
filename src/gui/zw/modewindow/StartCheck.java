@@ -58,13 +58,11 @@ public class StartCheck extends JDialog{
 				new StartCheckTwo();
 			}
 		});
-	btn2.addActionListener(new ActionListener() {
+		btn2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				//ÍË³ö
-				System.exit(0);
+				StartCheck.this.setVisible(false);
 			}
 		});
 		

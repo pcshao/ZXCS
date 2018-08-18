@@ -6,13 +6,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -28,8 +31,10 @@ import bean.Customer;
 import dao.CustomDao;
 import dao.GoodsDao;
 import dao.SellOrdersDao;
-
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 import util.CastUtil;
+import util.ImportExportHelp;
 import util.MyDateChooser;
 
 //往来账务（客户）
@@ -67,7 +72,7 @@ public class CurrentAccountsModelWindow extends JDialog{
 	DefaultTableModel table4model,table5model;
 	JTable table4,table5;
 	String[] arr4={"商品编号","商品名称","单位","销售数量","销售总金额","规格型号","备注"};
-	String[] arr5={"客户名称","单据号","开单日期","单位","单价","数量","总金额","规格型号","颜色"};
+	String[] arr5={"客户名称","单据号","开单日期","单位","单价","数量","总金额","规格型号"};
 	
 	JPanel jp_p3_top,jp_p3_center;
 	JButton btn_p3_1,btn_p3_2,btn_p3_3,btn_p3_4,btn_p3_5;
@@ -153,16 +158,25 @@ public class CurrentAccountsModelWindow extends JDialog{
 			columnNames2.add(str);
 		}
 		table2model=new DefaultTableModel(data2,columnNames2);
-		table2=new JTable(table2model);
+		table2=new JTable(table2model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		//表3
-		table3=new JTable(table3model);
 		columnNames3=new Vector();
 		data3=new Vector<Vector>();
 		for (String str:arr3) {
 			columnNames3.add(str);
 		}
 		table3model=new DefaultTableModel(data3,columnNames3);
-		table3=new JTable(table3model);
+		table3=new JTable(table3model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		jp_p1_center_p2_top=new JPanel();
 		jp_p1_center_p2_center=new JPanel();
 		tabbed_center=new JTabbedPane();
@@ -185,23 +199,31 @@ public class CurrentAccountsModelWindow extends JDialog{
 		jp_p2_center_p1=new JPanel();
 		jp_p2_center_p2=new JPanel();
 		//表4
-		table4=new JTable(table4model);
 		columnNames4=new Vector();
 		data4=new Vector<Vector>();
 		for (String str:arr4) {
 			columnNames4.add(str);
 		}
 		table4model=new DefaultTableModel(data4,columnNames4);
-		table4=new JTable(table4model);
+		table4=new JTable(table4model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		//表5
-		table5=new JTable(table5model);
 		columnNames5=new Vector();
 		data5=new Vector<Vector>();
 		for (String str:arr5) {
 			columnNames5.add(str);
 		}
 		table5model=new DefaultTableModel(data5,columnNames5);
-		table5=new JTable(table5model);
+		table5=new JTable(table5model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		
 		jp_p3_top=new JPanel();
 		jp_p3_center=new JPanel();
@@ -216,14 +238,18 @@ public class CurrentAccountsModelWindow extends JDialog{
 		btn_p3_4=new JButton("查名称");
 		btn_p3_5=new JButton("查询");
 		//表6
-		table6=new JTable(table6model);
 		columnNames6=new Vector();
 		data6=new Vector<Vector>();
 		for (String str:arr6) {
 			columnNames6.add(str);
 		}
 		table6model=new DefaultTableModel(data6,columnNames6);
-		table6=new JTable(table6model);
+		table6=new JTable(table6model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		
 		jp_p4_top=new JPanel();
 		jp_p4_center=new JPanel();
@@ -239,14 +265,18 @@ public class CurrentAccountsModelWindow extends JDialog{
 		btn_p4_5=new JButton("查名称");
 		btn_p4_6=new JButton("查询");
 		//表7
-		table7=new JTable(table7model);
 		columnNames7=new Vector();
 		data7=new Vector<Vector>();
 		for (String str:arr7) {
 			columnNames7.add(str);
 		}
 		table7model=new DefaultTableModel(data7,columnNames7);
-		table7=new JTable(table7model);
+		table7=new JTable(table7model)
+		{
+			public boolean isCellEditable(int row,int clumn){
+				return false;
+			}
+		};
 		/**
 		 * 选项卡1
 		 * @author yc
@@ -259,8 +289,8 @@ public class CurrentAccountsModelWindow extends JDialog{
 		jp_p1_top_1.add(btn_p1_1);
 		jp_p1_top_1.add(btn_p1_2);
 		jp_p1_top_1.add(btn_p1_3);
-		jp_p1_top_1.add(btn_p1_4);
-		jp_p1_top_1.add(btn_p1_5);
+		//jp_p1_top_1.add(btn_p1_4);
+		//jp_p1_top_1.add(btn_p1_5);
 		jp_p1_top_1.add(btn_p1_6);
 		jp_p1_top_1.add(btn_p1_7);
 		jp_p1_top_1.add(btn_p1_8);
@@ -439,6 +469,191 @@ public class CurrentAccountsModelWindow extends JDialog{
 		 * @author yc
 		 */
 		/**
+		 * 查看单据监听
+		 * @author yc
+		 */
+		btn_p1_2.addActionListener(new ActionListener() {//选项卡1
+			public void actionPerformed(ActionEvent e) {
+				data1=new SellOrdersDao().getSellOrdersInfo();
+				table1model=new DefaultTableModel(data1,columnNames1);
+				table1.setModel(table1model);
+				table1.updateUI();
+			}
+		});
+		btn_p4_1.addActionListener(new ActionListener() {//选项卡4
+			public void actionPerformed(ActionEvent e) {
+				data7=new SellOrdersDao().getCustomPayInfo();
+				table7model=new DefaultTableModel(data7,columnNames7);
+				table7.setModel(table7model);
+				table7.updateUI();
+			}
+		});
+		/**
+		 * 删除单据
+		 * @author yc
+		 */
+		btn_p1_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String str=data1.get(table1.getSelectedRow()).get(2).toString().trim();
+					if(new SellOrdersDao().deleteOrder(str)==true) {
+						JOptionPane.showMessageDialog(null, "已经成功删除订单！");
+						data1=new SellOrdersDao().getSellOrdersInfo();
+						table1model=new DefaultTableModel(data1,columnNames1);
+						table1.setModel(table1model);
+						table1.updateUI();
+					}else {
+						JOptionPane.showMessageDialog(null, "删除订单失败!！");
+					}
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, "请选择需要删除的订单！");
+				}
+				
+				
+			}
+		});
+		/**
+		 * 选项卡2的高级查询
+		 * @author yc
+		 */
+		btn_p2_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "请选择条件点击查询！");
+			}
+		});
+		/**
+		 * 导出
+		 * @author yc
+		 */
+		btn_p1_6.addActionListener(new ActionListener() {//选项卡1
+			public void actionPerformed(ActionEvent e) {
+				try {
+					JFileChooser fchooser2=new JFileChooser();
+					fchooser2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fchooser2.showSaveDialog(null);
+					String str=fchooser2.getSelectedFile().getAbsolutePath();
+					Vector<Vector> da=new Vector<Vector>();
+					da.add(columnNames1);
+					da.addAll(data1);
+					ImportExportHelp.ExportData(da, str);
+					JOptionPane.showMessageDialog(null, "导出成功！");
+				} catch (RowsExceededException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (WriteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}catch (Exception e2) {
+					// TODO: handle exception
+				}
+			}
+		});
+		btn_p2_2.addActionListener(new ActionListener() {//选项卡2
+			public void actionPerformed(ActionEvent e) {
+				try {
+					JFileChooser fchooser2=new JFileChooser();
+					fchooser2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fchooser2.showSaveDialog(null);
+					String str=fchooser2.getSelectedFile().getAbsolutePath();
+					Vector<Vector> da=new Vector<Vector>();
+					da.add(columnNames4);
+					da.addAll(data4);
+					ImportExportHelp.ExportData(da, str);
+					JOptionPane.showMessageDialog(null, "导出成功！");
+				} catch (RowsExceededException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (WriteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}catch (Exception e2) {
+					// TODO: handle exception
+				}
+			}
+		});
+		btn_p3_1.addActionListener(new ActionListener() {//选项卡3
+			public void actionPerformed(ActionEvent e) {
+				try {
+					JFileChooser fchooser2=new JFileChooser();
+					fchooser2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fchooser2.showSaveDialog(null);
+					String str=fchooser2.getSelectedFile().getAbsolutePath();
+					Vector<Vector> da=new Vector<Vector>();
+					da.add(columnNames6);
+					da.addAll(data6);
+					ImportExportHelp.ExportData(da, str);
+					JOptionPane.showMessageDialog(null, "导出成功！");
+				} catch (RowsExceededException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (WriteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}catch (Exception e2) {
+					// TODO: handle exception
+				}
+			}
+		});
+		btn_p4_2.addActionListener(new ActionListener() {//选项卡4
+			public void actionPerformed(ActionEvent e) {
+				try {
+					JFileChooser fchooser2=new JFileChooser();
+					fchooser2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fchooser2.showSaveDialog(null);
+					String str=fchooser2.getSelectedFile().getAbsolutePath();
+					Vector<Vector> da=new Vector<Vector>();
+					da.add(columnNames7);
+					da.addAll(data7);
+					ImportExportHelp.ExportData(da, str);
+					JOptionPane.showMessageDialog(null, "导出成功！");
+				} catch (RowsExceededException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (WriteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}catch (Exception e2) {
+					// TODO: handle exception
+				}
+			}
+		});
+		/**
+		 *打印
+		 *@author yc
+		 */
+		btn_p1_7.addActionListener(new ActionListener() {//选项卡1
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "未检测到打印驱动，请检查打印设备！");
+			}
+		});
+		btn_p2_3.addActionListener(new ActionListener() {//选项卡2
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "未检测到打印驱动，请检查打印设备！");
+			}
+		});
+		btn_p3_2.addActionListener(new ActionListener() {//选项卡3
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "未检测到打印驱动，请检查打印设备！");
+			}
+		});
+		btn_p4_3.addActionListener(new ActionListener() {//选项卡4
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "未检测到打印驱动，请检查打印设备！");
+			}
+		});
+		/**
 		 * 4个选项卡查客户名称的点击事件
 		 * 得到客户的相关信息
 		 * @author yc
@@ -533,7 +748,9 @@ public class CurrentAccountsModelWindow extends JDialog{
 			});
 			btn_p2_6.addActionListener(new ActionListener() {//选项卡2
 				public void actionPerformed(ActionEvent e) {
-					data4=new GoodsDao().getGoodsInToAccount();
+					String str1=tf_p2_1.getText().trim();
+					String str2=tf_p2_2.getText().trim();
+					data4=new GoodsDao().getGoodsInToAccount(str1,str2);
 					table4model=new DefaultTableModel(data4,columnNames4);
 					table4.setModel(table4model);
 					table4.updateUI();
@@ -549,7 +766,9 @@ public class CurrentAccountsModelWindow extends JDialog{
 			});
 			btn_p4_6.addActionListener(new ActionListener() {//选项卡4
 				public void actionPerformed(ActionEvent e) {
-					data7=new CustomDao().getCustomPayInfo();
+					String str1=tf_p4_1.getText().trim();
+					String str2=tf_p4_2.getText().trim();
+					data7=new CustomDao().getCustomPayInfo(str1,str2);
 					table7model=new DefaultTableModel(data7,columnNames7);
 					table7.setModel(table7model);
 					table7.updateUI();
@@ -574,10 +793,12 @@ public class CurrentAccountsModelWindow extends JDialog{
 			});
 			tf_p2_3.getDocument().addDocumentListener(new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
-					data6=new CustomDao().getCustomAccount();
-					table6model=new DefaultTableModel(data6,columnNames6);
-					table6.setModel(table1model);
-					table6.updateUI();
+					String str1=tf_p4_1.getText().trim();
+					String str2=tf_p4_2.getText().trim();
+					data4=new  SellOrdersDao().getGoodsInToAccount(ret2);
+					table4model=new DefaultTableModel(data4,columnNames4);
+					table4.setModel(table4model);
+					table4.updateUI();
 				}
 				public void insertUpdate(DocumentEvent e) {}
 				public void changedUpdate(DocumentEvent e) {	
@@ -604,6 +825,21 @@ public class CurrentAccountsModelWindow extends JDialog{
 						table2.updateUI();
 					}
 					
+				}
+			});
+			table4.addMouseListener(new MouseListener() {
+				public void mouseReleased(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseExited(MouseEvent e) {}
+				public void mouseEntered(MouseEvent e) {}
+				public void mouseClicked(MouseEvent e) {
+					if(e.getButton()==1&&e.getClickCount()==2) {
+						String str=data4.get(table4.getSelectedRow()).get(0).toString();
+						data5=new SellOrdersDao().getHuiZhongInfo(str);
+						table5model=new DefaultTableModel(data5, columnNames5);
+						table5.setModel(table5model);
+						table5.updateUI();
+				}
 				}
 			});
 			//退出

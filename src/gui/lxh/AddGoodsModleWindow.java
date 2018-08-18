@@ -184,12 +184,15 @@ public class AddGoodsModleWindow extends JDialog{
 						String goodsid=tf_bar.getText();
 						String norms=tf_spec.getText();
 						String unit=tf_unit.getText();
+						if(unit==null||unit.equals("")) {
+							unit="";
+						}
 						int type= Integer.parseInt(tf_type.getText());
 						int alertNum=Integer.parseInt(tf_sum.getText());
 						float in_price=Float.parseFloat(tf_inprice.getText());
 						float sell_price=Float.parseFloat(tf_outprice.getText());
 						String bz=tf_bz.getText();
-						String dname=AddGoodsModleWindow.this.igm.cbox_depot.getSelectedItem().toString();
+						String dname=AddGoodsModleWindow.this.igm.cbox_depot.getSelectedItem().toString().trim();
 						goodsdao.insertNewGoods(type, gname, goodsid, norms, unit, alertNum, in_price, sell_price, bz,dname);	
 					} catch (Exception e2) {
 						JOptionPane.showMessageDialog(null, "编号，名字，id，进售价格等不能为空");

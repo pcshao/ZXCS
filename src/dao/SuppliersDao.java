@@ -202,5 +202,32 @@ public class SuppliersDao {
 		}
 		return ret;
 	}
+	/**
+	 * 通过名称查找供货商对象所有信息
+	 * @param str
+	 * @return
+	 */
+	public Supplier getSupplierInfoByContactorName(String str) {
+		Supplier s = new Supplier();
+		String sql = "select * from suppliers where name=? ";
+		conn = db.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setString(1,str);   
+			rs = pstat.executeQuery();
+			if(rs.next()){
+				s.setSid(rs.getInt("sid"));
+				s.setName(rs.getString("name"));
+				s.setContact(rs.getString("contact"));
+				s.setPhone(rs.getString("phone"));
+				s.setAddress(rs.getString("address"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			db.closeConnection(conn, pstat, rs);
+		}
+		return s;
+	}
 
 }

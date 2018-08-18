@@ -46,7 +46,7 @@ public class WarningWindow extends JFrame{
 	jp_top_center_top,jp_low_low,jp_low_center,jp_top_top,jp_top_low,jp_top_center;		
 	JTextField tf_3,tf_4,tf_5,tf_6,tf2_3;
 	Vector items=new Vector();
-	JButton btn_1,btn_2,btn_3,btn_4,btn_5,btn_6,btn_7,btn_9;
+	JButton btn_1,btn_4,btn_5,btn_6,btn_7,btn_9;
 	JButton btn1_1,btn1_2;
 	//第一个表格
 	JTable table;
@@ -80,8 +80,6 @@ public class WarningWindow extends JFrame{
 		dc2_2=MyDateChooser.getInstance("yyyy-MM-dd");
 		
 		btn_1=new JButton("发出警报");
-		btn_2=new JButton("进货参考 ");
-		btn_3=new JButton("退货参考");
 		btn_4=new JButton("导出");
 		btn_5=new JButton("打印 ");
 		btn_6=new JButton("退出 ");btn_7=new JButton("查询 ");
@@ -107,7 +105,6 @@ public class WarningWindow extends JFrame{
 		//top添加按钮
 		//btn_1.setBackground(Color.red);
 		jp_top_top.add(btn_1);
-		jp_top_top.add(btn_2);jp_top_top.add(btn_3);
 		jp_top_top.add(btn_6);
 		//第一个表格
 		columnNames.add("编号");
@@ -183,20 +180,6 @@ public class WarningWindow extends JFrame{
 			public void mouseEntered(MouseEvent e) {				
 			}
 			public void mouseClicked(MouseEvent e) {					
-			}
-		});
-		btn_2.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(WarningWindow.this, "等不到天黑，烟火不会太完美");
-				
-			}
-		});
-		btn_3.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(WarningWindow.this, "我等到花儿都谢了");
-				
 			}
 		});
 		

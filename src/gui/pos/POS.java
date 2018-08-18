@@ -29,6 +29,7 @@ import java.util.logging.LogManager;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import bean.Customer;
@@ -37,6 +38,7 @@ import bean.Employee;
 import bean.Goods;
 import bean.PayWay;
 import bean.Vip;
+import gui.LoginUI;
 import service.AdminService;
 import service.PosService;
 import util.CastUtil;
@@ -371,7 +373,18 @@ public class POS extends JFrame{
 	}
 	
 	public static void main(String[] args) {
-		new AdminService().Login("admin", "123");
-		new POS();
+		SwingUtilities.invokeLater ( new Runnable ()
+        {
+            public void run ()
+            {
+            	 try {
+					org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+         		new AdminService().Login("admin", "123");
+        		new POS();
+            }
+        } );
 	}
 }

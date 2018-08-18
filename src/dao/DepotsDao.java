@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +13,7 @@ import util.DataBaseUtil;
 
 import bean.Customer;
 import bean.Depot;
+import bean.GoodsType;
 import bean.Supplier;
 import bean.orders.InOrder;
 import bean.orders.SellOrder;
@@ -296,6 +298,133 @@ public class DepotsDao {
 			du.closeConnection(conn, pstat, rs);
 		}
 		return did;
+	}
+	/**
+	 * 查询库存变动情况
+	 * 	聚合查询，不做Cast转换，直接返回结果
+	 */
+	public Vector<Vector> getDepotsChangeInfo() {
+		Vector<Vector> ret = new Vector<>();
+		String sql = "select g.id,g.name,g.goodsid,g.unit,gs.count,goodsSellNum,pi,ps,g.sellprice,pi*gs.count depotAll,g.norms,g.bz from goods g inner join goodsStore gs on g.id=gs.gid inner join (select gid,avg(preInprice) pi,avg(preSellPrice) ps,sum(num)as goodsSellNum from sellOrdersDetails GROUP BY gid) sod on sod.gid=g.id";
+		conn = du.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			rs = pstat.executeQuery();
+			while(rs.next()) {
+				Vector v = new Vector<>();
+				v.add(rs.getInt("id"));
+				v.add(rs.getString("name"));
+				v.add(rs.getString("goodSid"));
+				v.add(rs.getInt("unit"));
+				v.add(rs.getInt("count"));
+				v.add(rs.getInt("goodsSellNum"));
+				v.add(rs.getDouble("pi"));
+				v.add(rs.getDouble("ps"));
+				v.add(rs.getDouble("sellPrice"));
+				v.add(rs.getDouble("depotAll"));
+				v.add(rs.getString("norms"));
+				v.add(rs.getString("bz"));
+				ret.add(v);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	/**
+	 * 库存变动查询
+	 * 	根据仓库名、商品类别、商品编号或名称模糊
+	 */
+	public Vector<Vector> getDepotsChangeInfoByCondition(Depot depot, GoodsType goodsType, String search) {
+		Vector<Vector> ret = new Vector<>();
+		String sql = "select g.id,g.name,g.goodsid,g.unit,gs.count,goodsSellNum,pi,ps,g.sellprice,pi*gs.count depotAll,g.norms,g.bz from goods g "
+				+ "inner join goodsStore gs on g.id=gs.gid "
+				+ "inner join (select gid,avg(preInprice) pi,avg(preSellPrice) ps,sum(num)as goodsSellNum from sellOrdersDetails GROUP BY gid) "
+				+ "sod on sod.gid=g.id and gs.depot=? and (g.name like ? or g.id like ?)";
+		if(goodsType!=null)
+			sql = "select g.id,g.name,g.goodsid,g.unit,gs.count,goodsSellNum,pi,ps,g.sellprice,pi*gs.count depotAll,g.norms,g.bz from goods g "
+					+ "inner join goodsStore gs on g.id=gs.gid "
+					+ "inner join (select gid,avg(preInprice) pi,avg(preSellPrice) ps,sum(num)as goodsSellNum from sellOrdersDetails GROUP BY gid) "
+					+ "sod on sod.gid=g.id and gs.depot=? and (g.name like ? or g.id like ?) and g.type = ?";
+		conn = du.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setInt(1, depot.getDid());
+			pstat.setString(2, "%"+search+"%");
+			pstat.setString(3, "%"+search+"%");
+			if(goodsType!=null)
+				pstat.setInt(4, goodsType.getSelf_id());
+			rs = pstat.executeQuery();
+			while(rs.next()) {
+				Vector v = new Vector<>();
+				v.add(rs.getInt("id"));
+				v.add(rs.getString("name"));
+				v.add(rs.getString("goodSid"));
+				v.add(rs.getInt("unit"));
+				v.add(rs.getInt("count"));
+				v.add(rs.getInt("goodsSellNum"));
+				v.add(rs.getDouble("pi"));
+				v.add(rs.getDouble("ps"));
+				v.add(rs.getDouble("sellPrice"));
+				v.add(rs.getDouble("depotAll"));
+				v.add(rs.getString("norms"));
+				v.add(rs.getString("bz"));
+				ret.add(v);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			du.closeConnection(conn, pstat,rs);
+		}
+		return ret;
+	}
+	/**
+	 * 库存变动查询
+	 * 	根据仓库名、商品类别、商品辅助条码或名称模糊
+	 */
+	public Vector<Vector> getDepotsChangeInfoByCondition(Depot depot, GoodsType goodsType, String search,
+			Boolean useGoodsid) {
+		Vector<Vector> ret = new Vector<>();
+		String sql = "select g.id,g.name,g.goodsid,g.unit,gs.count,goodsSellNum,pi,ps,g.sellprice,pi*gs.count depotAll,g.norms,g.bz from goods g "
+				+ "inner join goodsStore gs on g.id=gs.gid "
+				+ "inner join (select gid,avg(preInprice) pi,avg(preSellPrice) ps,sum(num)as goodsSellNum from sellOrdersDetails GROUP BY gid) "
+				+ "sod on sod.gid=g.id and gs.depot=? and (g.name like ? or g.goodsid like ?)";
+		if(goodsType!=null)
+			sql = "select g.id,g.name,g.goodsid,g.unit,gs.count,goodsSellNum,pi,ps,g.sellprice,pi*gs.count depotAll,g.norms,g.bz from goods g "
+					+ "inner join goodsStore gs on g.id=gs.gid "
+					+ "inner join (select gid,avg(preInprice) pi,avg(preSellPrice) ps,sum(num)as goodsSellNum from sellOrdersDetails GROUP BY gid) "
+					+ "sod on sod.gid=g.id and gs.depot=? and (g.name like ? or g.goodsid like ?) and g.type = ?";
+		conn = du.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setInt(1, depot.getDid());
+			pstat.setString(2, "%"+search+"%");
+			pstat.setString(3, "%"+search+"%");
+			if(goodsType!=null)
+				pstat.setInt(4, goodsType.getSelf_id());
+			rs = pstat.executeQuery();
+			while(rs.next()) {
+				Vector v = new Vector<>();
+				v.add(rs.getInt("id"));
+				v.add(rs.getString("name"));
+				v.add(rs.getString("goodSid"));
+				v.add(rs.getInt("unit"));
+				v.add(rs.getInt("count"));
+				v.add(rs.getInt("goodsSellNum"));
+				v.add(rs.getDouble("pi"));
+				v.add(rs.getDouble("ps"));
+				v.add(rs.getDouble("sellPrice"));
+				v.add(rs.getDouble("depotAll"));
+				v.add(rs.getString("norms"));
+				v.add(rs.getString("bz"));
+				ret.add(v);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			du.closeConnection(conn, pstat,rs);
+		}
+		return ret;
 	}
 
 }

@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -14,6 +16,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -46,6 +49,8 @@ import dao.DepotsDao;
 import dao.EmployeesDao;
 import dao.OrderDao;
 import dao.PayWaysDao;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 
 public class InputGoodsModelWindow extends JDialog{
@@ -70,26 +75,27 @@ public class InputGoodsModelWindow extends JDialog{
 	/**
 	 * commboBox 获取仓库名称，支付方式，经手人																					//定义下拉框
 	 */	
-	ButtonGroup bg;																		//获取仓库
+	ButtonGroup bg;																			//获取仓库
 	JComboBox cbox_depot;
 	DefaultComboBoxModel cbox_depot_model;
-																			//支付方式
+																							//支付方式
 	JComboBox cbox_pay;
 	DefaultComboBoxModel combox_model;
-																			//经手人
+																							//经手人
 	JComboBox cbox_employees;
 	DefaultComboBoxModel combox_employees_model;
 	
 	JButton btn_select,btn_old_add,btn_new_add,btn_in_out,btn_ok,btn_exit;
 	JLabel lable_d;
-	String[] strs={"商品编号","商品名称","单位","规格","单价","数量","总金额"};			//表格的列名
+	String[] strs={"商品编号","商品名称","单位","规格","单价","数量","总金额"};				//表格的列名
 	
 	JTable table;																			//定义表格，维克托，以及model容器
-	Vector vectorboss,vector;											
+	Vector<Vector> vectorboss;
+	Vector vector;											
 	DefaultTableModel model;
 	
 	JPopupMenu pop_in_out;
-	JMenuItem mitem_in,mitmem_out;
+	JMenuItem mitem_in,mitmem_out;															//选项卡
 	
 	//2.选项卡第二个选项用到的东西
 	JPanel p_north,p_center,p_n1,p_c1,p_c11,p_c2,p_c21;	
@@ -131,7 +137,7 @@ public class InputGoodsModelWindow extends JDialog{
 		for(String str:strs){												//把strs全部放入维克托里面，然后把维克托放入model容器里
 			vector.add(str);
 		}
-		vectorboss=new Vector();
+		vectorboss=new Vector<Vector>();
 		model=new DefaultTableModel(vectorboss,vector);
 		table=new JTable(model);
 		
@@ -141,7 +147,7 @@ public class InputGoodsModelWindow extends JDialog{
 		p_auditing=new JPanel();
 		
 		tabbed.add("采购进货",p_input);										//为控制面板加入两个选项（面板）
-		tabbed.add("单据审核",p_auditing);
+		//tabbed.add("单据审核",p_auditing);
 		
 		//定义面板
 		p_input_up=new JPanel();
@@ -164,7 +170,7 @@ public class InputGoodsModelWindow extends JDialog{
 		tf_should_pay=new JTextField(8);
 		tf_reality_pay=new JTextField(8);
 		tf_number=new JTextField(10);
-		tf_bz=new JTextField(27);
+		tf_bz=new JTextField(33);
 		
 		
 		cbox_depot_model=new DefaultComboBoxModel(depots_dao.getDepots());					//定义combobox用于存取仓库名称
@@ -224,15 +230,16 @@ public class InputGoodsModelWindow extends JDialog{
 		p_down31.add(tf_should_pay);
 		p_down31.add(new JLabel("实付金额："));
 		p_down31.add(tf_reality_pay);
+		
 		p_down31.add(new JLabel("付款方式："));
 		p_down31.add(cbox_pay);
-		p_down31.add(new JLabel("原始单号："));
+		/*p_down31.add(new JLabel("原始单号："));
 		tf_number.setText("需要开通会员才能用！");
 		tf_number.setEditable(false);
-		p_down31.add(tf_number);
+		p_down31.add(tf_number);*/
 		
-		p_down32.add(new JLabel("经手人："));
-		p_down32.add(cbox_employees);
+		p_down31.add(new JLabel("经手人："));
+		p_down31.add(cbox_employees);
 		p_down32.add(new JLabel("你的备注："));
 		p_down32.add(tf_bz);
 		p_down32.add(new JLabel("      "));
@@ -400,16 +407,55 @@ public class InputGoodsModelWindow extends JDialog{
 			}
 		});
 		/**
-		 * 导入导出
+		 * 导入
 		 */
 		mitem_in.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ImportExportHelp();
+				ImportExportHelp a = new ImportExportHelp();
+				//取a对象的data数据
+				Vector<Vector> corectData = new Vector<>();
+				for(int i=0;i<a.data.size();i++)
+					if(a.data.get(i).lastElement().toString().trim().equals("可导入"))
+						corectData.add(a.data.get(i));
+					table.setModel(new DefaultTableModel(corectData, vector));
+				//计算应付金额
+				double wantMoney = 0;
+				for(int i=0;i<corectData.size();i++) {
+					wantMoney += Double.parseDouble(corectData.get(i).lastElement().toString());
+				}	
+				tf_should_pay.setText(wantMoney+"");
+				tf_reality_pay.setText(wantMoney+"");
 			}
 		});
+		/**
+		 * 导出
+		 */
 		mitmem_out.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new ImportExportHelp();
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+				JFileChooser out_file=new JFileChooser();
+				out_file.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				out_file.showSaveDialog(null);
+				String str=out_file.getSelectedFile().getAbsolutePath();
+				Vector<Vector> da=new Vector<Vector>();
+				da.add(vector);
+				da.addAll(vectorboss);
+				
+					ImportExportHelp.ExportData(da, str);
+					JOptionPane.showMessageDialog(null, "导出成功");
+				} catch (RowsExceededException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (WriteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}catch (NullPointerException e) {
+					JOptionPane.showMessageDialog(null, "无数据警告！");
+				}
+				
 			}
 		});
 		//导入导出菜单
@@ -440,6 +486,7 @@ public class InputGoodsModelWindow extends JDialog{
 				}
 			}
 		});
+		
 		/**
 		 * btn_exit退出
 		 */

@@ -14,12 +14,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import util.*;
 import dao.*;
 import service.*;
 import bean.*;
-import bean.orders.*;;
+import bean.orders.*;
 
 
 public class LoginUI extends JFrame{
@@ -37,7 +40,7 @@ public class LoginUI extends JFrame{
 		adminService = new AdminService();
 		
 		lab_name = new JLabel("账户名:");
-		lab_passwd = new JLabel("密    码:");
+		lab_passwd = new JLabel("\u5BC6  \u7801:");
 		jtf_count = new JTextField(15);
 		jtf_count.setText("admin");
 		jtf_passwd = new JPasswordField(15);
@@ -111,6 +114,17 @@ public class LoginUI extends JFrame{
 	}
 	
 	public static void main(String[] args) {
-		new LoginUI("zxcs超市管理系统");
+		SwingUtilities.invokeLater ( new Runnable ()
+        {
+            public void run ()
+            {
+            	 try {
+					org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            	new LoginUI("zxcs超市管理系统");
+            }
+        } );
 	}
 }

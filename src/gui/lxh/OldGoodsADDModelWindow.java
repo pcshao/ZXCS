@@ -69,7 +69,8 @@ public class OldGoodsADDModelWindow extends JDialog {
 	public String[] l={"商品编号","商品名称","单位","规格","参考进价","库存数","参考售价"};
 	public String[] r={"商品编号","商品名称","数量","单价","单位","规格","颜色","进货日期","参考售价"};
 	public String[] right={"商品编号","商品名称","单位","规格","进价","数量","总金额"};
-	public Vector vector_l,vector_c,vector_r,vector_right,vector_boss;            //vector_boss是全局维克托，用于存右边表格的数据
+	public Vector vector_l,vector_c,vector_r,vector_right;
+	public Vector<Vector> vector_boss;            //vector_boss是全局维克托，用于存右边表格的数据
 	public DefaultTableModel model_l,model_c,model_r,model_right;
 	
 	

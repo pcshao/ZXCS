@@ -47,7 +47,6 @@ public class TypeTreeModelWindow extends JDialog{
 		 */
 		btn_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(1);
 				node=(DefaultMutableTreeNode) typetree.tree_type.getLastSelectedPathComponent();;//返回选择节点
 			    type=(GoodsType) node.getUserObject();							//把节点转为GoodsType类型 返回type
 			    TypeTreeModelWindow.this.setVisible(false);

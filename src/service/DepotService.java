@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import bean.Depot;
 import bean.Goods;
+import bean.GoodsType;
 import bean.Supplier;
 import bean.orders.DbOrder;
 import bean.orders.InOrder;
@@ -142,4 +143,17 @@ public class DepotService {
 		}
 		return ret;
 	}
+	/**
+	 * 当前库存查询界面接口
+	 * 	库存变动情况、商品变动情况、商品信息查询
+	 */
+	public Vector<Vector> getDepotsChangeInfo() {
+		return new DepotsDao().getDepotsChangeInfo();
+	}
+	public Vector<Vector> getDepotsChangeInfoByCondition(Depot depot, GoodsType goodsType, String search, Boolean useGoodsid) {
+		if(useGoodsid)
+			return new DepotsDao().getDepotsChangeInfoByCondition(depot, goodsType, search, useGoodsid);
+		return new DepotsDao().getDepotsChangeInfoByCondition(depot, goodsType, search);
+	}
+	
 }

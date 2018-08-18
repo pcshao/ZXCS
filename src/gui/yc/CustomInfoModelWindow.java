@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -16,7 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JTextField;import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -102,13 +105,39 @@ public class CustomInfoModelWindow extends JDialog{
 					
 				}
 			});
-		//退出
+		/**
+		 * table监听
+		 * 点击事件（双击）
+		 * 使得到对应的顾客名称
+		 * @author yc
+		 */
+			table.addMouseListener(new MouseListener() {
+				public void mouseReleased(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseExited(MouseEvent e) {}
+				public void mouseEntered(MouseEvent e) {}
+				public void mouseClicked(MouseEvent e) {
+					try {if(e.getButton()==1&&e.getClickCount()==2) {
+							retData  = data.get(table.getSelectedRow());
+							CustomInfoModelWindow.this.setVisible(false);
+						}
+						} catch (Exception e2) {	
+						}
+				}
+			});;
+		/**
+		 * 退出
+		 * @author yc
+		 */
 			btn_exit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					CustomInfoModelWindow.this.setVisible(false);
 				}
 			});
-		//查找客户
+		/**
+		 * 查找客户
+		 * @author yc
+		 */
 			tf_check.getDocument().addDocumentListener(new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					String str=tf_check.getText();
@@ -124,7 +153,10 @@ public class CustomInfoModelWindow extends JDialog{
 				}
 				public void changedUpdate(DocumentEvent e) {}
 			});
-		//修改
+		/**
+		 * 修改
+		 * @author yc
+		 */
 			btn_alter.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					

@@ -167,7 +167,9 @@ public class AddGoodsModelWindow extends JDialog{
 		 * 监听方法设置
 		 * @author yc
 		 */
-		//加入所选商品
+		/**
+		 * 加入所选商品
+		 */
 		btn_addgood.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -211,21 +213,23 @@ public class AddGoodsModelWindow extends JDialog{
 				
 			}
 		});
-		//文档查询商品
+		/**
+		 * 文档查询商品
+		 */
 		tf_seekgoods.getDocument().addDocumentListener(new DocumentListener() {
 			public void removeUpdate(DocumentEvent e) {
-				String str=tf_seekgoods.getText();
+				String str=tf_seekgoods.getText().trim();
 				table1model=new DefaultTableModel(new GoodsDao().getAllGoodsByIdName(str),columnNames1);
 				table1.setModel(table1model);
 				table1.updateUI();
 			}
-			public void insertUpdate(DocumentEvent e) {}
-			public void changedUpdate(DocumentEvent e) {	
-				String str=tf_seekgoods.getText();
+			public void insertUpdate(DocumentEvent e) {
+				String str=tf_seekgoods.getText().trim();
 				table1model=new DefaultTableModel(new GoodsDao().getAllGoodsByIdName(str),columnNames1);
 				table1.setModel(table1model);
 				table1.updateUI();
 			}
+			public void changedUpdate(DocumentEvent e) {}
 		});
 		/**
 		 * 选择按钮监听
@@ -246,7 +250,7 @@ public class AddGoodsModelWindow extends JDialog{
 				}else{
 					data1=new GoodsDao().getAllGoods();
 					table1model=new DefaultTableModel(data1,columnNames1);
-					table1=new JTable(table1model);
+					table1.setModel(table1model);
 					table1.updateUI();
 				}
 				
@@ -372,7 +376,7 @@ public class AddGoodsModelWindow extends JDialog{
 		//取消点击事件
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			AddGoodsModelWindow.this.setVisible(true);
+				AddGoodsModelWindow.this.setVisible(false);
 			}
 		});
 		this.setLayout(new GridLayout(1,2));

@@ -88,6 +88,8 @@ public class Report_depotsBase extends JDialog{
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Vector<Vector> exportData = new Vector<Vector>();
+				if(data==null)
+					return;
 				exportData.add(columnNames);
 				exportData.addAll(data);
 				//提示输入路径，之后导出数据

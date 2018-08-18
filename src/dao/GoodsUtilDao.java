@@ -100,7 +100,7 @@ public class GoodsUtilDao {
 	 * 
 	 */
 	public int getMaxId() {
-		String sql = "select max(unid) from units";
+		String sql = "select max(unid) unid from units";
 		conn = db.getConnection();
 		try {
 			pstat = conn.prepareStatement(sql);

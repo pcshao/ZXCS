@@ -74,7 +74,7 @@ public class Depot {
 	}
 	@Override
 	public String toString() {
-		return "  "+name+"  ";
+		return name;
 	}
 	public String getInfo() {
 		return "Depot [did=" + did + ", name=" + name + ", contact=" + contact

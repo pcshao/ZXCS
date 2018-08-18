@@ -45,7 +45,7 @@ public class Index_ReportsUI extends JPanel {
 		panel_3.add(btn_8 = new JButton("商品销售统计"));
 		panel_3.add(btn_9 = new JButton("商品销售排行"));
 		panel_3.add(btn_10 = new JButton("销售营业分析"));
-		jp_btn.setLayout(new GridLayout(1, 3, 0, 0));
+		jp_btn.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		jp_btn.add(panel_1);
 		jp_btn.add(panel_2);
 		jp_btn.add(panel_3);

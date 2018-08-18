@@ -104,7 +104,7 @@ public class GoodSellModelWindow extends JDialog{
 		jp_goodsell=new JPanel();		//商品销售面板
 		jp_sellorderscheck=new JPanel();//销售审核面板
 		tabbed.add("商品销售",jp_goodsell);
-		tabbed.add("销售单审核",jp_sellorderscheck);
+//		tabbed.add("销售单审核",jp_sellorderscheck);
 		jp_sellorderscheck.setLayout(new BorderLayout());	//设置销售面板为边界布局
 		jp_goodsell.setLayout(new BorderLayout());			//设置销售面板为边界布局
 		
@@ -172,8 +172,6 @@ public class GoodSellModelWindow extends JDialog{
 		columnNames.add("单位");
 		columnNames.add("规格型号");
 		columnNames.add("单价");
-		columnNames.add("打折率");
-		columnNames.add("打折后");
 		columnNames.add("数量");
 		columnNames.add("总金额");
 		data=new Vector<Vector>();
@@ -348,7 +346,7 @@ public class GoodSellModelWindow extends JDialog{
 			public void actionPerformed(ActionEvent e) {
 				AddGoodsModelWindow	agmw=new AddGoodsModelWindow("增加商品(商品销售)");
 				Vector<Vector> data3=agmw.data3;
-				
+				double wantMoney=0;
 				for( Vector data_1:data3){
 					Vector data_1_1=new Vector();
 					data_1_1.add(0, data_1.get(0));
@@ -356,15 +354,13 @@ public class GoodSellModelWindow extends JDialog{
 					data_1_1.add(2, data_1.get(2));
 					data_1_1.add(3, "");//规格
 					data_1_1.add(4, data_1.get(3));
-					data_1_1.add(5, data_1.get(4));
-					data_1_1.add(6, data_1.get(5));
-					data_1_1.add(7, data_1.get(6));
-					data_1_1.add(8, data_1.get(7));
+					data_1_1.add(5, data_1.get(6));
+					data_1_1.add(6, data_1.get(7));
 					data.add(data_1_1);
-					tf_wantmoney.setText(data_1.get(7).toString());
-					tf_paymoney.setText(data_1.get(7).toString());
-					}
-				
+					wantMoney += Double.parseDouble(data_1.get(7).toString());
+				}
+				tf_wantmoney.setText(wantMoney+"");
+				tf_paymoney.setText(wantMoney+"");
 				tablemodel=new DefaultTableModel(data,columnNames);
 				table.setModel(tablemodel);
 				table.updateUI();
@@ -383,12 +379,27 @@ public class GoodSellModelWindow extends JDialog{
 				GoodSellModelWindow.this.setVisible(false);
 			}
 		});
-		//导入导出菜单
+		/**
+		 * 导入导出菜单
+		 */
 		btn_inout.addMouseListener(new mouseClicked());
 		//导入
 		mitem_in.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ImportExportHelp();
+				ImportExportHelp a = new ImportExportHelp();
+				//取a对象的data数据
+				Vector<Vector> corectData = new Vector<>();
+				for(int i=0;i<a.data.size();i++)
+					if(a.data.get(i).lastElement().toString().trim().equals("可导入"))
+						corectData.add(a.data.get(i));
+					table.setModel(new DefaultTableModel(corectData, columnNames));
+				//计算应付金额
+				double wantMoney = 0;
+				for(int i=0;i<corectData.size();i++) {
+					wantMoney += Double.parseDouble(corectData.get(i).lastElement().toString());
+				}	
+				tf_wantmoney.setText(wantMoney+"");
+				tf_paymoney.setText(wantMoney+"");
 			}
 		});
 		//导出
@@ -425,6 +436,7 @@ public class GoodSellModelWindow extends JDialog{
 		btn_ok.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {	
+					data.get(0);
 					String id=iddan;
 					String odate=GoodSellModelWindow.this.tf_selldate.getText().trim();
 					Double wantMoney=Double.parseDouble(GoodSellModelWindow.this.tf_wantmoney.getText().trim());
@@ -436,10 +448,10 @@ public class GoodSellModelWindow extends JDialog{
 					PayWay payWay=(PayWay) GoodSellModelWindow.this.cobx_pay.getSelectedItem();
 					Customer customer=GoodSellModelWindow.this.ret1;
 					SellOrder sellorder=new SellOrder(id, odate, depot, wantMoney, payMoney, agent, operator, bz, payWay, customer);
-					new  SellService().addOrder(sellorder, new CastUtil().vectorToGoods(data), true);
+					new  SellService().addOrder(sellorder, new CastUtil().vectorToGoods_sell(data), true);
 					JOptionPane.showMessageDialog(null, "添加销售单据成功!!!");
 					GoodSellModelWindow.this.setVisible(false);
-				} catch (java.lang.NullPointerException e1) {
+				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, "单据中没有业务不能保存");
 				}
 				
@@ -447,7 +459,7 @@ public class GoodSellModelWindow extends JDialog{
 		});
 		
 		this.setTitle("商品销售");
-		this.add(tabbed);
+		getContentPane().add(tabbed);
 		this.setBounds(300, 100, 900, 550);
 		this.setLocationRelativeTo(null);
 		this.setModal(true);

@@ -59,7 +59,7 @@ public class InService {
 		orderdao = new OrderDao();
 		orderdao.addOrders(order);
 		//为了方便 如果整单退的话还是循环增加订单商品详情，但会发生数据冗余
-		orderdao.addOrderDetails(order.getId(), sellGoods);
+		orderdao.addOrdersDetails(order.getId(), sellGoods);
 		int depotId = order.getDepot().getDid();
 		//循环减少每件商品的库存 来源仓库不变，仓库库存可为负
 		for(Goods g:sellGoods) {

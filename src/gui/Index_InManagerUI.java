@@ -44,7 +44,7 @@ public class Index_InManagerUI extends JPanel {
 		jp2.add(btn_4 = new JButton("采购单据查询"));
 		btn_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new BuyDocumentsCheckModelWindow();
+				new BuyDocumentsCheckModelWindow(null);
 			}
 		});
 		jp2.add(btn_5 = new JButton("当前库存查询"));

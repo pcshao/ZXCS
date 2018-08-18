@@ -256,13 +256,13 @@ public class CustomDao {
 		 * ÍùÀ´ÕËÎñ
 		 * @author y'c
 		 */
-		public Vector<Vector> getCustomPayInfo(){
+		public Vector<Vector> getCustomPayInfo(String str1,String str2){
 			Vector<Vector> datas=new Vector<Vector>();
 				String sql="select s.id,s.odate,p.name p,c.name c,e.name e,a.name a,s.bz from sellorders s "+ 
 							"join customers c on s.customer=c.cid "+
 							"join employees e on e.eid=s.agent "+
 							"join admins a on a.aid=s.operator "+
-							"join payways p on p.pid=s.payway";
+							"join payways p on p.pid=s.payway where s.odate between to_date('"+str1+"','yyyy-mm-dd') and to_date('"+str2+"','yyyy-mm-dd')";
 				conn=du.getConnection();
 				try {
 					pstat=conn.prepareStatement(sql);
