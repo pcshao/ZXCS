@@ -1,9 +1,11 @@
 package gui;
 
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -16,6 +18,7 @@ public class Index_bottom_SomeButtonUI extends JPanel{
 	
 	public Index_bottom_SomeButtonUI() {
 		jp = new JPanel(new GridLayout(1, 5));
+		
 		jp.add(btn_1 = new JButton("商品管理")); 
 		btn_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -27,6 +30,22 @@ public class Index_bottom_SomeButtonUI extends JPanel{
 		jp.add(btn_4 = new JButton("仓库设置")); 
 		jp.add(btn_5 = new JButton("员工信息")); 
 		this.add(jp);
+		//图标
+		ImageIcon ic_goods = new ImageIcon(MainUI.class.getResource("/icon/barscode3.png"));
+		ic_goods.setImage(ic_goods.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ImageIcon factory3 = new ImageIcon(MainUI.class.getResource("/icon/factory3.png"));
+		factory3.setImage(factory3.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ImageIcon store = new ImageIcon(MainUI.class.getResource("/icon/store.png"));
+		store.setImage(store.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ImageIcon store11 = new ImageIcon(MainUI.class.getResource("/icon/store11.png"));
+		store11.setImage(store11.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ImageIcon user58 = new ImageIcon(MainUI.class.getResource("/icon/user58.png"));
+		user58.setImage(user58.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		btn_1.setIcon(ic_goods);
+		btn_2.setIcon(store11);
+		btn_3.setIcon(store);
+		btn_4.setIcon(factory3);
+		btn_5.setIcon(user58);
 		
 		btn_2.addActionListener(new ActionListener() {
 			@Override

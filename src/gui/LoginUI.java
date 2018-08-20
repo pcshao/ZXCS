@@ -26,6 +26,7 @@ import bean.orders.*;
 
 public class LoginUI extends JFrame{
 
+	public static final String BKPATH = "/img/bk1.jpg";
 	private JLabel lab_name,lab_passwd;
 	private JTextField jtf_count;
 	private JPasswordField jtf_passwd;

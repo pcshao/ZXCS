@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import service.DepotService;
 import javax.swing.JTabbedPane;
 import java.awt.Font;
 import java.awt.Color;
+import javax.swing.ImageIcon;
 
 
 public class MainUI extends JFrame{
@@ -49,8 +51,19 @@ public class MainUI extends JFrame{
 		//顶部按钮
 		jp_north = new JPanel();
 		jp_north.add(btn_today = new JButton("今日提醒"));
+		//图标
+		ImageIcon ic_alert = new ImageIcon(MainUI.class.getResource("/icon/alert.png"));
+		ImageIcon ic_depot = new ImageIcon(MainUI.class.getResource("/icon/depot.png"));
+		ImageIcon ic_vip = new ImageIcon(MainUI.class.getResource("/icon/vip2.png"));
+		ic_alert.setImage(ic_alert.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ic_depot.setImage(ic_depot.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		ic_vip.setImage(ic_vip.getImage().getScaledInstance(20, 20,Image.SCALE_DEFAULT ));
+		//
+		btn_today.setIcon(ic_alert);
 		jp_north.add(btn_depots_search = new JButton("\u5E93\u5B58\u67E5\u8BE2"));
-		jp_north.add(btn_date = new JButton("\u5F80\u6765\u8D26\u52A1"));
+		btn_depots_search.setIcon(ic_depot);
+		jp_north.add(btn_date = new JButton("\u4F1A\u5458\u7BA1\u7406"));
+		btn_date.setIcon(ic_vip);
 		jp_content.add(jp_north,BorderLayout.NORTH);
 		//左部功能按钮
 //		jp_west = new JPanel(new GridLayout(6, 1));
@@ -139,17 +152,7 @@ public class MainUI extends JFrame{
 		btn_date.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-//				JFrame jf = new JFrame();
-//				JTextField tf = new JTextField();
-//		        tf.setBounds(10, 10, 200, 30);
-//				
-//				MyDateChooser date = MyDateChooser.getInstance();
-//				date.register(tf);
-//				
-//				jf.getContentPane().add(tf);
-//				jf.setBounds(200,100,300,200);
-//				jf.setVisible(true);
+				new VipsManageUI();
 			}
 		});
 		

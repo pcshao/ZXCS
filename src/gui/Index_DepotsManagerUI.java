@@ -3,10 +3,13 @@ package gui;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
 
 import javax.swing.border.EmptyBorder;
+
+import com.lzw.BackgroundPanel;
 
 import gui.yc.StockCheckModelWindow;
 import gui.zw.warehouse.*;
@@ -23,10 +26,17 @@ public class Index_DepotsManagerUI extends JPanel {
 	
 	public Index_DepotsManagerUI() {
 		setLayout(new BorderLayout(0, 0));
+
+		//±≥æ∞Õº
+		BackgroundPanel bk = new BackgroundPanel();
+		add(bk, BorderLayout.CENTER);
+		bk.setImage(Toolkit.getDefaultToolkit().getImage(Index_InManagerUI.class.getResource(LoginUI.BKPATH)));
+		bk.setLayout(new BorderLayout(0, 0));
 		
 		jp_content = new JPanel();
+		jp_content.setOpaque(false);
+		bk.add(jp_content, BorderLayout.NORTH);
 		jp_content.setBorder(new EmptyBorder(100, 100, 100, 100));
-		add(jp_content);
 		
 		jp_1 = new JPanel();
 		jp_content.add(jp_1);
@@ -49,14 +59,14 @@ public class Index_DepotsManagerUI extends JPanel {
 		
 		jp_2 = new JPanel();
 		jp_content.add(jp_2);
-		jp_2.setLayout(new GridLayout(2, 1, 0, 0));
-		jp_content.add(btn_2 = new JButton("ø‚¥Ê≈Ãµ„"));
-		btn_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CheckWindow();
-			}
-		});
-		jp_2.add(btn_2);
+		jp_2.setLayout(new GridLayout(1, 1, 0, 0));
+//		jp_content.add(btn_2 = new JButton("ø‚¥Ê≈Ãµ„"));
+//		btn_2.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				new CheckWindow();
+//			}
+//		});
+//		jp_2.add(btn_2);
 		jp_content.add(btn_3 = new JButton("ø‚¥Ê±‰∂Ø"));
 		btn_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -64,5 +74,8 @@ public class Index_DepotsManagerUI extends JPanel {
 			}
 		});
 		jp_2.add(btn_3);
+		
+		Index_bottom_SomeButtonUI index_bottom_SomeButtonUI = new Index_bottom_SomeButtonUI();
+		bk.add(index_bottom_SomeButtonUI, BorderLayout.SOUTH);
 	}
 }

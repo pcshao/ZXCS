@@ -3,8 +3,12 @@ package gui;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.BorderLayout;
 import javax.swing.border.EmptyBorder;
+
+import com.lzw.BackgroundPanel;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -17,10 +21,16 @@ public class Index_SystemManageUI extends JPanel {
 	
 	public Index_SystemManageUI() {
 		setLayout(new BorderLayout(0, 0));
+
+		//背景图
+		BackgroundPanel bk = new BackgroundPanel();
+		add(bk, BorderLayout.CENTER);
+		bk.setImage(Toolkit.getDefaultToolkit().getImage(Index_InManagerUI.class.getResource(LoginUI.BKPATH)));
+		bk.setLayout(new BorderLayout(0, 0));
 		jp_content = new JPanel();
+		jp_content.setOpaque(false);
+		bk.add(jp_content, BorderLayout.CENTER);
 		jp_content.setBorder(new EmptyBorder(100, 100, 100, 100));
-		
-		this.add(jp_content);
 		
 		jp_1 = new JPanel();
 		jp_content.add(jp_1);
@@ -43,6 +53,8 @@ public class Index_SystemManageUI extends JPanel {
 		jp_2.add(btn_depots);
 		jp_content.add(btn_suppliers = new JButton("供货商管理"));
 		jp_2.add(btn_suppliers);
+		Index_bottom_SomeButtonUI index_bottom_SomeButtonUI = new Index_bottom_SomeButtonUI();
+		bk.add(index_bottom_SomeButtonUI, BorderLayout.SOUTH);
 		
 		//监听
 		//操作员管理
@@ -58,7 +70,7 @@ public class Index_SystemManageUI extends JPanel {
 		});
 		btn_adminsPasswd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				new PassWordManage();
 			}
 		});
 		btn_vips.addActionListener(new ActionListener() {

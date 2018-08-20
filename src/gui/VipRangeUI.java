@@ -86,6 +86,14 @@ public class VipRangeUI extends JDialog{
 		});
 		panel_1.add(btn_edit);
 		
+		JButton btn_exit = new JButton("\u9000\u51FA");
+		btn_exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VipRangeUI.this.setVisible(false);
+			}
+		});
+		panel_1.add(btn_exit);
+		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));

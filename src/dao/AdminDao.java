@@ -245,5 +245,47 @@ public class AdminDao {
 		}
 		return ret;
 	}
-	
+	/**
+	 * –ﬁ∏ƒ√‹¬Î
+	 * @param id
+	 * @param password
+	 * @return
+	 */
+	public boolean changeAdminPassword(int id, String password) {
+		String sql = "update admins set password = ? where aid = ?";
+		conn = db.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setString(1, password);
+			pstat.setInt(2, id);
+			pstat.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			db.closeConnection(conn, pstat, rs);
+		}
+		return false;
+	}
+	/**
+	 * ÷ÿ÷√√‹¬Î
+	 * @param id
+	 * @param password
+	 * @return
+	 */
+	public boolean changeAdminPassword(String password) {
+		String sql = "update admins set password = ?";
+		conn = db.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setString(1, password);
+			pstat.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			db.closeConnection(conn, pstat, rs);
+		}
+		return false;
+	}
 }

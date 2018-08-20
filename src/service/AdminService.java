@@ -73,4 +73,36 @@ public class AdminService {
 	public Vector<Admin> searchAdmin(String content){
 		return new AdminDao().searchAdmin(content);
 	}
+	/**
+	 * 密码管理界面所需数据
+	 * @return
+	 */
+	public Vector<Vector> getAdminsPassword() {
+		Vector<Vector> ret = new Vector<>();
+		Vector<Admin> admins = new AdminDao().getAdmins();
+		for(Admin a:admins) {
+			Vector v = new Vector<>();
+			v.add(a.getAid());
+			v.add(a.getName());
+			v.add(a.getPassword());
+			v.add(a.getJob());
+			ret.add(v);
+		}
+		return ret;
+	}
+	/**
+	 * 更换新密码，根据ID
+	 * @param id
+	 * @param password
+	 */
+	public boolean changeAdminPassword(int id, String password) {
+		return new AdminDao().changeAdminPassword(id, password);
+	}
+	/**
+	 * 重置所有用户的密码
+	 */
+	public boolean resetAdminPassword() {
+		String password = "123";
+		return new AdminDao().changeAdminPassword(password);	
+	}
 }

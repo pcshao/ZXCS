@@ -9,7 +9,11 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.border.EmptyBorder;
+
+import com.lzw.BackgroundPanel;
 
 import gui.yc.CurrentAccountsModelWindow;
 import gui.yc.CustomReturnGoodsModelWindow;
@@ -23,17 +27,21 @@ import java.awt.event.ActionEvent;
 public class Index_SellManager extends JPanel {
 
 	JButton btn_1,btn_2,btn_3,btn_4,btn_5,btn_6;
-	JPanel jp_1,jp_2,jp_content;
+	JPanel jp_1,jp_2;
 	private JPanel jp_center;
 	public Index_SellManager() {
-		
-		this.setLayout(new BorderLayout());
-		jp_content = new JPanel();
-		jp_content.setLayout(new BorderLayout(0, 0));
+		setLayout(new BorderLayout(0, 0));
+
+		//背景图
+		BackgroundPanel bk = new BackgroundPanel();
+		add(bk);
+		bk.setImage(Toolkit.getDefaultToolkit().getImage(Index_InManagerUI.class.getResource(LoginUI.BKPATH)));
+		bk.setLayout(new BorderLayout(0, 0));
 		
 		jp_center = new JPanel();
+		bk.add(jp_center, BorderLayout.NORTH);
+		jp_center.setOpaque(false);
 		jp_center.setBorder(new EmptyBorder(100, 100, 100, 100));
-		jp_content.add(jp_center, BorderLayout.CENTER);
 		jp_center.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		jp_1 = new JPanel(new GridLayout(2, 1));
 		jp_center.add(jp_1);
@@ -50,7 +58,7 @@ public class Index_SellManager extends JPanel {
 				new CustomReturnGoodsModelWindow();
 			}
 		});
-		jp_2 = new JPanel(new GridLayout(4, 1));
+		jp_2 = new JPanel(new GridLayout(3, 1));
 		jp_center.add(jp_2);
 		jp_2.add(btn_3 = new JButton("往来账务"));
 		btn_3.addActionListener(new ActionListener() {
@@ -70,9 +78,7 @@ public class Index_SellManager extends JPanel {
 				new StockCheckModelWindow();
 			}
 		});
-		jp_2.add(btn_6 = new JButton("POS销售统计"));
-		
-		this.add(jp_content);
-		this.add(new Index_bottom_SomeButtonUI(), BorderLayout.SOUTH);
+		Index_bottom_SomeButtonUI index_bottom_SomeButtonUI = new Index_bottom_SomeButtonUI();
+		bk.add(index_bottom_SomeButtonUI, BorderLayout.SOUTH);
 	}
 }
