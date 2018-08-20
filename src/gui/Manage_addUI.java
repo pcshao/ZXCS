@@ -118,39 +118,39 @@ public class Manage_addUI extends JDialog{
 		
 		tf_1 = new JTextField();
 		panel_5.add(tf_1);
-		tf_1.setColumns(10);
+		tf_1.setColumns(14);
 		
 		JPanel panel_7 = new JPanel();
 		jp_content_r.add(panel_7);
 		
 		tf_3 = new JTextField();
 		panel_7.add(tf_3);
-		tf_3.setColumns(10);
+		tf_3.setColumns(14);
 		
 		JPanel panel_8 = new JPanel();
 		jp_content_r.add(panel_8);
 		
 		tf_4 = new JTextField();
 		panel_8.add(tf_4);
-		tf_4.setColumns(10);
+		tf_4.setColumns(14);
 		
 		JPanel panel_9 = new JPanel();
 		jp_content_r.add(panel_9);
 		
 		tf_5 = new JTextField();
 		panel_9.add(tf_5);
-		tf_5.setColumns(10);
+		tf_5.setColumns(14);
 		
 		JPanel panel_10 = new JPanel();
 		jp_content_r.add(panel_10);
 		
 		tf_6 = new JTextField();
 		panel_10.add(tf_6);
-		tf_6.setColumns(10);
+		tf_6.setColumns(14);
 		
 		tf_2 = new JTextField();
 		panel_12.add(tf_2);
-		tf_2.setColumns(10);
+		tf_2.setColumns(14);
 
 		//label
 		lb_1.setText(items.get(0).toString());

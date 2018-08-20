@@ -138,7 +138,7 @@ public class DepotService {
 			v.addAll(depotsDao.getDepotCostAll(b, InOrder.ORDERNAME, depotName));	//库存总成本 三个字段
 			v.addAll(depotsDao.getDepotCostThroughMonth(a, b, depotName, new InOrder()));	//进货单
 			v.addAll(depotsDao.getDepotCostThroughMonth(a, b, depotName, new SellOrder()));	//销售单
-			v.add("");//销售利润
+			v.add(depotsDao.getDepotProfitThroughMonth(a, b, depotName).get(0));//销售利润
 			ret.add(v);
 		}
 		return ret;

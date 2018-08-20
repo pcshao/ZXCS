@@ -42,7 +42,7 @@ public class MainUI extends JFrame{
 	
 	
 	public MainUI() {
-		setTitle("超市管理系统");
+		setTitle("\u8D85\u5E02\u7BA1\u7406\u7CFB\u7EDFV1.0");
 		jp_content = new JPanel(new BorderLayout());
 		
 		//服务注册
@@ -81,7 +81,7 @@ public class MainUI extends JFrame{
 		tabbedPane.setBorder(null);
 		tabbedPane.setBackground(Color.LIGHT_GRAY);
 		tabbedPane.setForeground(Color.DARK_GRAY);
-		tabbedPane.setFont(new Font("黑体", Font.PLAIN, 20));
+		tabbedPane.setFont(new Font("黑体", Font.PLAIN, 17));
 		tabbedPane.add("进货管理", new Index_InManagerUI());
 		tabbedPane.add("销售管理", new Index_SellManager());
 		tabbedPane.add("库存管理", new Index_DepotsManagerUI());

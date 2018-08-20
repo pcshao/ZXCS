@@ -426,5 +426,39 @@ public class DepotsDao {
 		}
 		return ret;
 	}
+	/**
+	 * 获取时间片内的销售利润
+	 * 	指定仓库
+	 * @param a
+	 * @param b
+	 * @param depotName
+	 * @return
+	 */
+	public Vector getDepotProfitThroughMonth(String a, String b, String depotName) {
+		Vector ret = new Vector();
+		String sql = "select sum(sum(preSellPrice*num-preInprice*num) )as profit "
+				+ "from sellOrdersDetails sod inner join ( " + 
+				"select so.id,so.odate from sellOrders so "
+				+ "inner join sellordersdetails sod on sod.oid=so.id and SUBSTR(so.id, 0, 2)='XS' " + 
+				" inner join depots d on so.depot=d.did and d.name=? "
+				+ "and so.odate between to_date(?,'yyyy-mm') and to_date(?,'yyyy-mm')" + 
+				")so on sod.oid=so.id GROUP BY gid";
+		conn = du.getConnection();
+		try {
+			pstat = conn.prepareStatement(sql);
+			pstat.setString(1, depotName);
+			pstat.setString(2, a);
+			pstat.setString(3, b);
+			rs = pstat.executeQuery();
+			while(rs.next()) {
+				ret.add(rs.getDouble("profit"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			du.closeConnection(conn, pstat, rs);
+		}
+		return ret;
+	}
 
 }
