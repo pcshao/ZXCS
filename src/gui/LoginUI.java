@@ -24,7 +24,6 @@ import service.*;
 import bean.*;
 import bean.orders.*;
 
-
 public class LoginUI extends JFrame{
 
 	private JLabel lab_name,lab_passwd;

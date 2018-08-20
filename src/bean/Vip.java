@@ -10,6 +10,8 @@ public class Vip {
 	private String odate;
 	private String phone;
 	
+	private double discount;	//会员等级表的折扣力度
+	
 	public Vip() {
 	}
 	public Vip(int id, String name, int range, double countMoney, double allPayMoney, String odate, String phone) {
@@ -62,6 +64,17 @@ public class Vip {
 	}
 	public void setOdate(String odate) {
 		this.odate = odate;
+	}
+	public double getDiscount() {
+		return discount;
+	}
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+	@Override
+	public String toString() {
+		return "Vip [id=" + id + ", name=" + name + ", range=" + range + ", countMoney=" + countMoney + ", allPayMoney="
+				+ allPayMoney + ", odate=" + odate + ", phone=" + phone + ", discount=" + discount + "]";
 	}
 	
 }

@@ -33,6 +33,8 @@ public class Manage_editUI extends JDialog{
 	AdminService adminService;
 	SystemService systemService;
 	
+	private Vector retData;
+	
 	public Manage_editUI(String title, Vector items, Vector selected) {
 		setTitle(title);
 		
@@ -140,7 +142,6 @@ public class Manage_editUI extends JDialog{
 		tf_2 = new JTextField();
 		panel_11.add(tf_2);
 		tf_2.setColumns(10);
-		tf_2.setText(String.valueOf(selected.get(0)));
 		
 		//label
 		lb_1.setText(items.get(0).toString());
@@ -152,9 +153,9 @@ public class Manage_editUI extends JDialog{
 			lb_6.setText(items.get(5).toString());
 		}catch (Exception e){
 			lb_5.setVisible(false);
-			tf_6.setVisible(false);
+			tf_5.setVisible(false);
 			lb_6.setVisible(false);
-			tf_2.setVisible(false);
+			tf_6.setVisible(false);
 		}
 		//tf
 		tf_1.setText(String.valueOf(selected.get(0)));
@@ -264,6 +265,19 @@ public class Manage_editUI extends JDialog{
 						return;
 					}
 					Manage_editUI.this.setVisible(false);
+				}else {
+					retData = new Vector<>();
+					try {
+						retData.add(tf_1.getText().trim());
+						retData.add(tf_2.getText().trim());
+						retData.add(tf_3.getText().trim());
+						retData.add(tf_4.getText().trim());
+						retData.add(tf_5.getText().trim());
+						retData.add(tf_6.getText().trim());
+					}catch (Exception ee) {
+						
+					}
+					Manage_editUI.this.setVisible(false);
 				}
 			}
 		});
@@ -279,6 +293,9 @@ public class Manage_editUI extends JDialog{
 		
 		this.setModal(true);
 		this.setVisible(true);
+	}
+	public Vector getRetData() {
+		return retData;
 	}
 	private void showStatus(int a) {
 		if(a==-1)

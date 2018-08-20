@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 
 public class Index_SystemManageUI extends JPanel {
 	
-	JButton btn_admins,btn_customers,btn_employees,btn_depots,btn_suppliers;
+	JButton btn_admins,btn_adminsPasswd,btn_customers,btn_employees,btn_depots,btn_suppliers,btn_vips;
 	JPanel jp_content;
 	private JPanel jp_1;
 	private JPanel jp_2;
@@ -24,12 +24,15 @@ public class Index_SystemManageUI extends JPanel {
 		
 		jp_1 = new JPanel();
 		jp_content.add(jp_1);
-		jp_1.setLayout(new GridLayout(2, 1, 0, 0));
+		jp_1.setLayout(new GridLayout(4, 1, 0, 0));
 		
 		jp_content.add(btn_admins = new JButton("操作员管理"));
 		jp_1.add(btn_admins);
 		jp_content.add(btn_employees = new JButton("员工管理"));
 		jp_1.add(btn_employees);
+		jp_content.add(btn_vips = new JButton("VIP管理"));
+		jp_1.add(btn_vips);
+		jp_1.add(btn_adminsPasswd = new JButton("密码管理"));
 		
 		jp_2 = new JPanel();
 		jp_content.add(jp_2);
@@ -51,6 +54,16 @@ public class Index_SystemManageUI extends JPanel {
 		btn_employees.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Manage_ParentUI("员工管理");
+			}
+		});
+		btn_adminsPasswd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btn_vips.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new VipsManageUI();
 			}
 		});
 		btn_customers.addActionListener(new ActionListener() {

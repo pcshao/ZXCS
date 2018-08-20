@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
 
+
 import bean.Admin;
 import bean.Customer;
 import bean.Depot;
@@ -56,9 +57,11 @@ public class PosService {
 		order.setPayMoney(wantMoney); 	//默认POS销售实付金额等于应付金额
 		//销售服务增加订单、订单商品详情、更新库存
 		new SellService().addOrder(order, sellGoods);
-		//结算VIP增加vip消费记录
+		//结算VIP增加vip消费记录，会员消费总额增加
 		if(isVip) {
-			new VipDao().addRecord(vip, order.getId());
+			VipDao vipDap = new VipDao();
+			vipDap.addRecord(vip, order.getId());
+			vipDap.plusConsumer(vip.getId(), wantMoney);
 		}
 	}
 	/**

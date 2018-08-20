@@ -21,10 +21,19 @@ import bean.Customer;
 import bean.Depot;
 import bean.Employee;
 import bean.Supplier;
+import bean.Vip;
 import service.AdminService;
 import service.DepotService;
 import service.SystemService;
+import service.VipService;
 
+/**
+ * 添加数据公共窗口
+ * 	会员等级管理采用生成数据后在主界面进行业务处理
+ * 	其他的都是在此界面进行业务处理
+ * @author pcshao
+ *
+ */
 public class Manage_addUI extends JDialog{
 	
 	private JTextField tf_1,tf_3,tf_4,tf_5,tf_6,tf_2;
@@ -32,6 +41,8 @@ public class Manage_addUI extends JDialog{
 	DepotService depotService;
 	AdminService adminService;
 	SystemService systemService;
+	VipService vipService;
+	private Vector retData;
 	
 	public Manage_addUI(String title, Vector items) {
 		setTitle(title);
@@ -134,7 +145,6 @@ public class Manage_addUI extends JDialog{
 		jp_content_r.add(panel_10);
 		
 		tf_6 = new JTextField();
-		tf_6.setText(" ");
 		panel_10.add(tf_6);
 		tf_6.setColumns(10);
 		
@@ -152,9 +162,9 @@ public class Manage_addUI extends JDialog{
 			lb_6.setText(items.get(5).toString());
 		}catch (Exception e){
 			lb_5.setVisible(false);
-			tf_6.setVisible(false);
+			tf_5.setVisible(false);
 			lb_6.setVisible(false);
-			tf_2.setVisible(false);
+			tf_6.setVisible(false);
 		}
 		
 		JPanel jp_south = new JPanel();
@@ -243,6 +253,33 @@ public class Manage_addUI extends JDialog{
 						return;
 					}
 					Manage_addUI.this.setVisible(false);
+				}else if("新增会员".equals(title)) {
+					vipService = new VipService();
+					Vip vip = new Vip();
+					vip.setName(tf_1.getText().trim());
+					vip.setRange(Integer.parseInt(tf_2.getText().trim()));
+					vip.setCountMoney(Double.parseDouble(tf_3.getText().trim()));
+					vip.setPhone(tf_4.getText().trim());
+					if(vipService.addVip(vip))
+						showStatus(0);
+					else {
+						showStatus(-1);
+						return;
+					}
+					Manage_addUI.this.setVisible(false);
+				}else {
+					retData = new Vector<>();
+					try {
+						retData.add(tf_1.getText().trim());
+						retData.add(tf_2.getText().trim());
+						retData.add(tf_3.getText().trim());
+						retData.add(tf_4.getText().trim());
+						retData.add(tf_5.getText().trim());
+						retData.add(tf_6.getText().trim());
+					}catch(Exception ee) {
+						
+					}
+					Manage_addUI.this.setVisible(false);
 				}
 			}
 		});
@@ -258,6 +295,10 @@ public class Manage_addUI extends JDialog{
 		
 		this.setModal(true);
 		this.setVisible(true);
+	}
+	
+	public Vector getRetData() {
+		return retData;
 	}
 	/**
 	 * 状态显示

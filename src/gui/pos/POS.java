@@ -172,8 +172,9 @@ public class POS extends JFrame{
 					vipSpeciall = (double) table_main.getModel().getValueAt(i, 7);
 					vipDisCount = (double) table_main.getModel().getValueAt(i, 8);
 					goods.add(new Goods(g, tempNum, sellPrice));
-					if(isVip)
-						wantMoney += vipSpeciall*vipDisCount*tempNum;
+					if(isVip) {
+						wantMoney += vip.getDiscount()*vipSpeciall*vipDisCount*tempNum;
+					}
 					else
 						wantMoney += disCount*speciallPrice*tempNum;
 				}
@@ -338,10 +339,11 @@ public class POS extends JFrame{
 			return;
 		if((vip= posService.getVipByPhone(vipPhone))==null)
 			return;
-		if(vip!=null) 
+		if(vip!=null) {
 			if(JOptionPane.YES_OPTION==new JOptionPane().showConfirmDialog(POS.this, "是否会员："+vip.getName()
 					+ "\n联系电话："+vip.getPhone(), "会员:"+vip.getName(), JOptionPane.YES_NO_OPTION))
 				isVip = true;
+		}
 	}
 	/**
 	 * 动态插入和更新table_main
